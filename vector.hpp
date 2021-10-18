@@ -78,6 +78,11 @@ namespace ft {
 			vector( InputIterator first, InputIterator last,
 					const allocator_type &alloc = allocator_type(),
 					ft::enable_if<!ft::is_integral<InputIterator>::value, InputIterator>::type* = 0)
+			:
+				alloc( alloc )
+			{
+				
+			}
 
 
 
