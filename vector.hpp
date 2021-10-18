@@ -4,7 +4,7 @@
 # include <iostream>
 # include "utils/utils.hpp"
 # include "utils/random_access_iterator.hpp"
-
+# include "utils/type_traits.hpp"
 
 namespace ft {
 
@@ -39,18 +39,18 @@ namespace ft {
 			explicit vector( allocator_type &alloc = allocator_type() )
 			:
 				alloc( alloc ),
-				start( 0 ),
-				end( 0 ),
-				capacity_end( 0 )
+				start( NULL ),
+				end( NULL ),
+				capacity_end( NULL )
 			{}
 
 			explicit vector( size_type count, const value_type &value = value_type(),
 								allocator_type &alloc = allocator_type() )
 			:
 				alloc( alloc ),
-				start( 0 ),
-				end( 0 ),
-				capacity_end( 0 )
+				start( NULL ),
+				end( NULL ),
+				capacity_end( NULL )
 			{
 				start = alloc.allocate( n );
 				end = start;
@@ -63,9 +63,9 @@ namespace ft {
 							allocator_type &alloc = allocator_type() )
 			:
 				alloc( alloc ),
-				start( 0 ),
-				end( 0 ),
-				capacity_end( 0 )
+				start( NULL ),
+				end( NULL ),
+				capacity_end( NULL )
 			{
 				start = alloc.allocate( n );
 				end = start;
@@ -75,7 +75,9 @@ namespace ft {
 			}
 
 			template < class InputIterator >
-			vector( InputIterator first, InputIterator last )
+			vector( InputIterator first, InputIterator last,
+					const allocator_type &alloc = allocator_type(),
+					ft::enable_if<!ft::is_integral<InputIterator>::value, InputIterator>::type* = 0)
 
 
 
