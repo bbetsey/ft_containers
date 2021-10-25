@@ -13,7 +13,7 @@ namespace ft {
 			typedef Distance	difference_type;
 			typedef Pointer		pointer;
 			typedef Reference	reference;
-	}
+	};
 
 	//MARK: - std::iterator_traits<It>::iterator_category 
 
