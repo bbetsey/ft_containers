@@ -47,7 +47,7 @@ namespace ft {
 			~random_access_iterator( void ) {}
 
 
-			//MARK: - Class Methods ( getters )
+			//MARK: - Class Methods
 
 			pointer	getPointer( void ) {
 				return num;

@@ -29,20 +29,23 @@ namespace ft {
 			allocator_type	alloc;
 			pointer			start;
 			pointer			end;
-			pointer			capacity_end;
-		
+			size_type		size;
+			size_type		capacity;
+
 		public:
 
-
-			//MARK: - Class Constructor
+			//MARK: - Class Default Constructor
 
 			explicit vector( allocator_type &alloc = allocator_type() )
 			:
 				alloc( alloc ),
 				start( NULL ),
 				end( NULL ),
-				capacity_end( NULL )
+				size( 0 );
+				capacity( 0 );
 			{}
+
+			//MARK: - Class Constructor ( with default value )
 
 			explicit vector( size_type count, const value_type &value = value_type(),
 								allocator_type &alloc = allocator_type() )
@@ -50,14 +53,16 @@ namespace ft {
 				alloc( alloc ),
 				start( NULL ),
 				end( NULL ),
-				capacity_end( NULL )
+				size( count );
+				capacity( count );
 			{
-				start = alloc.allocate( n );
-				end = start;
-				capacity_end = start + n;
-				for (size_type i = 0; i < n, i++)
+				start = alloc.allocate( count );
+				end = start + count;
+				for (size_type i = 0; i < count, i++)
 					alloc.construct( start + i, value );
 			}
+
+			//MARK: - Class Constructor ( with value )
 
 			explicit vector( size_type count, const value_type &value,
 							allocator_type &alloc = allocator_type() )
@@ -65,25 +70,16 @@ namespace ft {
 				alloc( alloc ),
 				start( NULL ),
 				end( NULL ),
-				capacity_end( NULL )
+				size( count );
+				capacity( count );
 			{
-				start = alloc.allocate( n );
-				end = start;
-				capacity_end = start + n;
-				for (size_type i = 0; i < n, i++)
+				start = alloc.allocate( count );
+				end = start + count;
+				for (size_type i = 0; i < count, i++)
 					alloc.construct( start + i, value );
 			}
 
-			template < class InputIterator >
-			vector( InputIterator first, InputIterator last,
-					const allocator_type &alloc = allocator_type(),
-					ft::enable_if<!ft::is_integral<InputIterator>::value, InputIterator>::type* = 0)
-			:
-				alloc( alloc )
-			{
-				
-			}
-
+			//MARK: - Class Constructor ( with range )
 
 
 	};
