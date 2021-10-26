@@ -74,6 +74,9 @@ namespace ft {
 
 	};
 
+
+	//MARK: - Not Member Functions
+
 	template < typename T >
 	bool	operator == ( const ft::random_access_iterator<T> lhs, const ft::random_access_iterator<T> rhs ) {
 		return lhs.getPointer() == rhs.getPointer();
@@ -154,8 +157,6 @@ namespace ft {
 				 typename ft::random_access_iterator<TR> rhs ) {
 		return lhs.getPointer() - rhs.getPointer();
 	}
-
-
 
 }
 
