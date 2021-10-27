@@ -30,51 +30,86 @@ namespace ft {
 
 			//MARK: - Class Constructor
 			
-			reverse_iterator( void );
+			reverse_iterator( void ) : it() {}
 			
-			explicit reverse_iterator( iterator_type x );
+			explicit reverse_iterator( iterator_type it ) : it( it ) {}
 
 
 			//MARK: - Class Copy Constructor
 
 			template < class U >
-			reverse_iterator( const reverse_iterator<U> &src );
+			reverse_iterator( const reverse_iterator<U> &src ) : it( src.it ) {}
 
 			
 			//MARK: - Class Assignation Overload
 
 			template < class U >
-			reverse_iterator	&operator = ( const reverse_iterator<U> &src );
+			reverse_iterator	&operator = ( const reverse_iterator<U> &src ) {
+				if (this != &src)
+					it = src.it;
+				return *this;
+			}
 
 
 			//MARK: - Class Distructor
 
-			~reverse_iterator( void );
+			~reverse_iterator( void ) {}
 
 
 			//MARK: - Class Methods
 
-			iterator_type	base( void ) const;
+			iterator_type	base( void ) const { return it; }
 
 
 			//MARK: - Class Valid Expressions Overload
 
-			reference	operator * ( void ) const;
-			pointer		operator -> ( void ) const;
+			reference	operator * ( void ) const {
+				Iterator	tmp( it );
+				return *(--tmp);
+			}
 
-			reference	operator [] ( difference_type n ) const;
+			pointer		operator -> ( void ) const { return std::addressof( operator*() ); }
 
-			reverse_iterator	&operator ++ ( void );
-			reverse_iterator	operator ++ ( int );
+			reference	operator [] ( difference_type n ) const { return base()[- n - 1]; }
 
-			reverse_iterator	&operator -- ( void );
-			reverse_iterator	operator -- ( int );
 
-			reverse_iterator	operator + ( difference_type n ) const;
-			reverse_iterator	operator - ( difference_type n ) const;
+			reverse_iterator	&operator ++ ( void ) {
+				--it;
+				return *this;
+			}
+			
+			reverse_iterator	operator ++ ( int ) {
+				reverse_iterator	tmp( *this );
+				--it;
+				return tmp;
+			}
 
-			reverse_iterator	&operator += ( difference_type n );
-			reverse_iterator	&operator -= ( difference_type n );
+
+			reverse_iterator	&operator -- ( void ) {
+				++it;
+				return *this;
+			}
+
+			reverse_iterator	operator -- ( int ) {
+				reverse_iterator	tmp( *this );
+				++it;
+				return tmp;
+			}
+
+
+			reverse_iterator	operator + ( difference_type n ) const { return reverse_iterator( base() - n ); }
+			reverse_iterator	operator - ( difference_type n ) const { return reverse_iterator( base() + n ); }
+
+
+			reverse_iterator	&operator += ( difference_type n ) {
+				it -= n;
+				return *this;
+			}
+
+			reverse_iterator	&operator -= ( difference_type n ) {
+				it += n;
+				return *this;
+			}
 
 	};
 

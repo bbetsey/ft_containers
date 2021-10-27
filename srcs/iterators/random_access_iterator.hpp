@@ -10,11 +10,6 @@ namespace ft {
 	template < typename T >
 	class random_access_iterator : public ft::iterator<ft::random_access_iterator_tag, T> {
 
-
-		private:
-			pointer		ptr;
-
-
 		public:
 
 			//MARK: - Member types
@@ -24,53 +19,76 @@ namespace ft {
 			typedef typename ft::iterator<ft::random_access_iterator_tag, T>::difference_type		difference_type;
 			typedef typename ft::iterator<ft::random_access_iterator_tag, T>::pointer				pointer;
 			typedef typename ft::iterator<ft::random_access_iterator_tag, T>::reference				reference;
+		
+
+		private:
+
+			pointer		ptr;
+
+
+		public:
 
 
 			//MARK: - Class Constructors
 
-			random_access_iterator( void );
-			random_access_iterator( pointer ptr );
+			random_access_iterator( void )  : ptr( 0 ) {}
+			random_access_iterator( pointer ptr ) : ptr( ptr ) {}
 
 
 			//MARK: - Class Copy Constructor
 
-			random_access_iterator( const random_access_iterator &src );
+			random_access_iterator( const random_access_iterator &src ) { *this = src; }
 
 
 			//MARK: - Class Assignation Overload
 
-			random_access_iterator	&operator = ( const random_access_iterator &src );
+			random_access_iterator	&operator = ( const random_access_iterator &src ) {
+				if (this != &src)
+					ptr = src.ptr;
+				return *this;
+			}
 
 
 			//MARK: - Class Distructor
 
-			~random_access_iterator( void );
+			~random_access_iterator( void ) {}
 
 
 			//MARK: - Class Methods ( getters )
 
-			pointer	getPointer( void );
+			pointer	getPointer( void ) { return ptr; }
+			pointer	getPointer( void ) const { return ptr; }
 
 
 			//MARK: - Class Valid Expressions Overload
 
-			reference	operator * ( void ) const;
-			pointer		operator -> ( void ) const;
+			reference	operator * ( void ) const { return *ptr; }
+			pointer		operator -> ( void ) const { return &(*ptr); }
 
-			random_access_iterator	&operator ++ ( void );
-			random_access_iterator	operator ++ ( int );
-			random_access_iterator	&operator -- ( void );
-			random_access_iterator	operator -- ( int );
+			random_access_iterator	&operator ++ ( void ) { ++ptr; return *this; }
 
-			random_access_iterator	operator + ( difference_type n ) const;
-			random_access_iterator	operator - ( difference_type n ) const;
+			random_access_iterator	operator ++ ( int ) {
+				random_access_iterator	tmp( *this );
+				++tmp;
+				return tmp;
+			}
 
-			random_access_iterator	&operator += ( difference_type n );
-			random_access_iterator	&operator -= ( difference_type n );
+			random_access_iterator	&operator -- ( void ) { --ptr; return *this; }
+			random_access_iterator	operator -- ( int ) {
+				random_access_iterator	tmp( *this );
+				--tmp;
+				return tmp;
+			}
 
-			reference	operator [] ( difference_type n ) const;
+			random_access_iterator	operator + ( difference_type n ) const { return ptr + n; }
+			random_access_iterator	operator - ( difference_type n ) const { return ptr - n; }
 
-			operator	random_access_iterator<const T> ( void ) const;
+			random_access_iterator	&operator += ( difference_type n ) { ptr += n; return *this; }
+			random_access_iterator	&operator -= ( difference_type n ) { ptr -= n; return *this; }
+
+			reference	operator [] ( difference_type n ) const { return ptr[n]; }
+
+			operator	random_access_iterator<const T> ( void ) const { return random_access_iterator<const T>( ptr ); }
 
 	};
 

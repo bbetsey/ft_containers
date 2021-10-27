@@ -1,8 +1,9 @@
 NAME	= containers
 SRCS	= main.cpp
+
 OBJS	= $(SRCS:.cpp=.o)
-INC		= -I
-FLAGS	= -Wall -Wextra -Werror -W -std=c++98
+INC		= -I srcs/containers/ -I srcs/iterators/ -I srcs/utils/
+FLAGS	= -Wall -Wextra -Werror -std=c++98
 
 all: $(NAME)
 

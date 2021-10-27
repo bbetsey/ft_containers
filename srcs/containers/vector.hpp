@@ -5,6 +5,7 @@
 # include "../iterators/random_access_iterator.hpp"
 # include "../iterators/reverse_iterator.hpp"
 # include "../utils/lexicographical_compare.hpp"
+# include "../utils/type_traits.hpp"
 
 namespace ft {
 
@@ -31,100 +32,190 @@ namespace ft {
 
 		private:
 
-			allocator_type	_alloc;
-			pointer			_start;
-			size_type		_size;
-			size_type		_capacity;
+			allocator_type		_alloc;
+			pointer				_start;
+			size_type			_size;
+			size_type			_capacity;
 
 		
 		public:
 
-			//MARK: - Class Constructor
 
-			explicit vector( const allocator_type &alloc = allocator_type() );
+			//MARK: - Class Constructors
+
+			explicit vector( const allocator_type &alloc = allocator_type() )
+			:
+				_alloc( alloc ),
+				_start( NULL ),
+				_size( 0 ),
+				_capacity( 0 )
+			{}
 
 			explicit vector( size_type count,
 							 const value_type &value = value_type(),
-							 const allocator_type &alloc = allocator_type() );
+							 const allocator_type &alloc = allocator_type() )
+			:
+				_alloc( alloc ),
+				_size( count )
+			{
+				_capacity = count;
+				_start = _alloc.allocate( _capacity );
+
+				for (iterator it = begin(); it != end(); ++it)
+					_alloc.construct( &(*it), value );
+			}
 
 			template < class InputIterator >
 			vector( InputIterator first, InputIterator last,
-					const allocator_type &alloc = allocator_type() );		
+					const allocator_type &alloc = allocator_type(),
+					typename ft::enable_if<!ft::is_integral<InputIterator>::value>::type * = 0 )
+			:
+				_alloc( alloc ),
+				_size( 0 )
+			{
+				for (InputIterator it; it != last; ++it)
+					++_size;
+				_capacity = _size;
+				_start = _alloc.allocate( _capacity );
+				for (iterator it = begin(); first !=  last; ++first, ++it)
+					*it = *first;
+			}		
+
 
 
 			//MARK: - Class Copy Constructor
 
-			vector( const vector &src );
+			vector( const vector &src )
+			:
+				_alloc( src.alloc ),
+				_start( NULL ),
+				_size( src._size ),
+				_capacity( src._capacity )
+			{
+				insert( begin(), src.begin(), src.end() );
+			}
+
 
 
 			//MARK: - Class Assignation Overload
 
-			vector	&operator = ( const vector &src );
+			vector	&operator = ( const vector &src ) {
+				if (this != &src) {
+					clear();
+					insert( begin(), src.begin(), src.end() );
+				}
+				return *this;
+			}
+
 
 
 			//MARK: - Class Distructor
 
-			~vector( void );
+			~vector( void ) {
+				for (iterator it = begin(); it != end(); ++it)
+					_alloc.destroy( &(*it) );
+				_alloc.deallocate( _start, _capacity );
+			}
+
 
 
 			//MARK: - Class Methods ( getters )
 
-			allocator_type	get_allocator( void ) const;
+			allocator_type	get_allocator( void ) const {
+				return _alloc;
+			}
+
 
 
 			//MARK: - Class Methods
 
-			void	assign( size_type count, const value_type &value );
+			void	assign( size_type count, const value_type &value ) {
+				clear();
+				_size = count;
+				if (count > _capacity) {
+					_alloc.deallocate( _start, _capacity );
+					_capacity = _size;
+					_start = _alloc.allocate( _capacity );
+				}
+				for (iterator it = begin(); it != end(); ++it)
+					_alloc.construct( it, value );
+			}
 
 			template < class InputIterator >
-			void	assign( InputIterator first, InputIterator last );
+			void	assign( InputIterator first, InputIterator last,
+							typename ft::enable_if<!ft::is_integral<InputIterator>::value>::type * = 0 ) {
+				clear();
+				for (InputIterator it = first; it != last; ++it)
+					++_size;
+				if ( _size > _capacity ) {
+					_alloc.deallocate( _start, _capacity );
+					_capacity = _size;
+					_start = _alloc.allocate( _capacity );
+				}
+				for (iterator it = begin(); first != last; ++it, ++first)
+					_alloc.construct( it, *first );
+			}
+
 
 
 			//MARK: - Class Element Access
-			
-			reference			at( size_type pos );
-			const_reference		at( size_type pos ) const;
 
-			reference			operator [] ( size_type pos );
-			const_reference		operator [] ( size_type pos ) const;
+			reference			at( size_type pos ) {
+				if (pos > _size)
+					throw std::out_of_range("vector index out of range");
+				return _start[pos];
+			}
 
-			reference			front( void );
-			const_reference		front( void ) const;
+			const_reference		at( size_type pos ) const {
+				if (pos > _size)
+					throw std::out_of_range("vector index out of range");
+				return _start[pos];
+			}
 
-			reference			back( void );
-			const_reference		back( void ) const;
+			reference			operator [] ( size_type pos ) { return _start[pos]; }
+			const_reference		operator [] ( size_type pos ) const { return _start[pos]; }
+
+			reference			front( void ) { return *begin(); }
+			const_reference		front( void ) const { return *begin(); }
+
+			reference			back( void ) { return *(end() - 1); }
+			const_reference		back( void ) const { return *(end() - 1); }
 
 			value_type			*data( void );
 			const value_type	*data( void ) const;
 
 
+
 			//MARK: - Iterators
 
-			iterator				begin( void );
-			const_iterator			begin( void ) const;
+			iterator				begin( void ) { return iterator( _start ); }
+			const_iterator			begin( void ) const { return const_iterator( _start ); }
 
-			iterator				end( void );
-			const_iterator			end( void ) const;
+			iterator				end( void ) { return iterator( _start + _size ); }
+			const_iterator			end( void ) const { return const_iterator( _start + _size ); }
 
-			reverse_iterator		rbegin( void );
-			const_reverse_iterator	rbegin( void ) const;
+			reverse_iterator		rbegin( void ) { return reverse_iterator( _start + _size ); }
+			const_reverse_iterator	rbegin( void ) const { return const_reverse_iterator( _start + _size ); }
 
-			reverse_iterator		rend( void );
-			const_reverse_iterator	rend( void ) const;
+			reverse_iterator		rend( void ) { return reverse_iterator( _start ); }
+			const_reverse_iterator	rend( void ) const { return const_reverse_iterator( _start ); }
 
 
 			//MARK: - Capacity
 
-			bool		empty( void ) const;
-			size_type	size( void ) const;
-			size_type	max_size( void ) const;
+			bool		empty( void ) const { return _size == 0; }
+			size_type	size( void ) const { return _size; }
+			size_type	max_size( void ) const { return _alloc.max_size(); }
+			size_type	capacity( void ) const { return _capacity; }
+			
 			void		reserve( size_type new_cap );
-			size_type	capacity( void ) const;
+			
 
 
 			//MARK: - Modifiers
 
 			void		clear( void );
+
 			iterator	insert( iterator pos, const value_type &value );
 			void		insert( iterator pos, size_type count, const value_type &value );
 

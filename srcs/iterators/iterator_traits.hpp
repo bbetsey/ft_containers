@@ -19,7 +19,7 @@ namespace ft {
 	template < class T >
 	class iterator_traits<T*> {
 		public:
-			typedef std::ptrdiff							difference_type;
+			typedef std::ptrdiff_t							difference_type;
 			typedef T										value_type;
 			typedef T*										pointer;
 			typedef T&										reference;
