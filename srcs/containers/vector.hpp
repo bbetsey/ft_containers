@@ -138,7 +138,7 @@ namespace ft {
 					_start = _alloc.allocate( _capacity );
 				}
 				for (iterator it = begin(); it != end(); ++it)
-					_alloc.construct( it, value );
+					_alloc.construct( it.operator->() , value );
 			}
 
 			template < class InputIterator >
@@ -153,7 +153,7 @@ namespace ft {
 					_start = _alloc.allocate( _capacity );
 				}
 				for (iterator it = begin(); first != last; ++it, ++first)
-					_alloc.construct( it, *first );
+					_alloc.construct( it.operator->(), *first );
 			}
 
 
