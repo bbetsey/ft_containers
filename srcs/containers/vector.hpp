@@ -30,6 +30,7 @@ namespace ft {
 		
 
 		private:
+
 			allocator_type	_alloc;
 			pointer			_start;
 			size_type		_size;
@@ -37,7 +38,6 @@ namespace ft {
 
 		
 		public:
-
 
 			//MARK: - Class Constructor
 
