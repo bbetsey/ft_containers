@@ -41,7 +41,7 @@ namespace ft {
 		public:
 
 
-			//MARK: - Class Constructors
+			//MARK: - Class Constructors ✓
 
 			explicit vector( const allocator_type &alloc = allocator_type() )
 			:
@@ -83,7 +83,7 @@ namespace ft {
 
 
 
-			//MARK: - Class Copy Constructor
+			//MARK: - Class Copy Constructor ✓
 
 			vector( const vector &src )
 			:
@@ -97,7 +97,7 @@ namespace ft {
 
 
 
-			//MARK: - Class Assignation Overload
+			//MARK: - Class Assignation Overload ✓
 
 			vector	&operator = ( const vector &src ) {
 				if (this != &src) {
@@ -109,7 +109,7 @@ namespace ft {
 
 
 
-			//MARK: - Class Distructor
+			//MARK: - Class Distructor ✓
 
 			~vector( void ) {
 				for (iterator it = begin(); it != end(); ++it)
@@ -119,7 +119,7 @@ namespace ft {
 
 
 
-			//MARK: - Class Methods ( getters )
+			//MARK: - Class Methods ( getters ) ✓
 
 			allocator_type	get_allocator( void ) const {
 				return _alloc;
@@ -127,7 +127,7 @@ namespace ft {
 
 
 
-			//MARK: - Class Methods
+			//MARK: - Class Methods ✓
 
 			void	assign( size_type count, const value_type &value ) {
 				clear();
@@ -181,12 +181,12 @@ namespace ft {
 			reference			back( void ) { return *(end() - 1); }
 			const_reference		back( void ) const { return *(end() - 1); }
 
-			value_type			*data( void );
-			const value_type	*data( void ) const;
+			value_type			*data( void ) { return _start; }
+			const value_type	*data( void ) const { return _start; }
 
 
 
-			//MARK: - Iterators
+			//MARK: - Iterators ✓
 
 			iterator				begin( void ) { return iterator( _start ); }
 			const_iterator			begin( void ) const { return const_iterator( _start ); }
@@ -201,20 +201,36 @@ namespace ft {
 			const_reverse_iterator	rend( void ) const { return const_reverse_iterator( _start ); }
 
 
-			//MARK: - Capacity
+
+			//MARK: - Capacity ✓
 
 			bool		empty( void ) const { return _size == 0; }
 			size_type	size( void ) const { return _size; }
 			size_type	max_size( void ) const { return _alloc.max_size(); }
 			size_type	capacity( void ) const { return _capacity; }
 			
-			void		reserve( size_type new_cap );
+			void		reserve( size_type new_cap ) {
+				if (new_cap < _capacity)
+					return;
+				pointer	new_start = _alloc.allocate( new_cap );
+				for(size_type i = 0; i < _size; ++i) {
+					_alloc.construct( new_start + i, _start[i] );
+					_alloc.destroy( _start + i );
+				}
+				_alloc.deallocate( _start, _capacity );
+				_start = new_start;
+				_capacity = new_cap;
+			}
 			
 
 
 			//MARK: - Modifiers
 
-			void		clear( void );
+			void		clear( void ) {
+				for (iterator it = begin(); it != end(); ++it)
+					_alloc.destroy( it.operator->() );
+				_size = 0;
+			}
 
 			iterator	insert( iterator pos, const value_type &value );
 			void		insert( iterator pos, size_type count, const value_type &value );

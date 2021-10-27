@@ -15,7 +15,13 @@ int	main( void ) {
 	std::cout << "Capacity: " << vec.capacity() << std::endl;
 	std::cout << "Max Size: " << vec.max_size() << std::endl;
 
+	std::cout << "\n----- Reserve testing -----" << std::endl;
+	vec.reserve( 10 );
+	std::cout << "Capacity: " << vec.capacity() << std::endl;
 
+	std::cout << "\n----- Clear testing -----" << std::endl;
+	vec.clear();
+	std::cout << "Size: " << vec.size() << std::endl;
 
 	return 0;
 }
