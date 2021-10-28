@@ -43,43 +43,16 @@ namespace ft {
 
 			//MARK: - Class Constructors ✓
 
-			explicit vector( const allocator_type &alloc = allocator_type() )
-			:
-				_alloc( alloc ),
-				_start( NULL ),
-				_size( 0 ),
-				_capacity( 0 )
-			{}
+			explicit vector( const allocator_type &alloc = allocator_type() );
 
 			explicit vector( size_type count,
 							 const value_type &value = value_type(),
-							 const allocator_type &alloc = allocator_type() )
-			:
-				_alloc( alloc ),
-				_size( count )
-			{
-				_capacity = count;
-				_start = _alloc.allocate( _capacity );
-
-				for (iterator it = begin(); it != end(); ++it)
-					_alloc.construct( &(*it), value );
-			}
+							 const allocator_type &alloc = allocator_type() );
 
 			template < class InputIterator >
 			vector( InputIterator first, InputIterator last,
 					const allocator_type &alloc = allocator_type(),
-					typename ft::enable_if<!ft::is_integral<InputIterator>::value>::type * = 0 )
-			:
-				_alloc( alloc ),
-				_size( 0 )
-			{
-				for (InputIterator it; it != last; ++it)
-					++_size;
-				_capacity = _size;
-				_start = _alloc.allocate( _capacity );
-				for (iterator it = begin(); first !=  last; ++first, ++it)
-					*it = *first;
-			}		
+					typename ft::enable_if<!ft::is_integral<InputIterator>::value>::type * = 0 );
 
 
 
@@ -247,6 +220,54 @@ namespace ft {
 			void		swap( vector &src );
 
 	};
+
+
+
+
+	//MARK: - Class Constructors
+
+	template < class T, class Alloc >
+	ft::vector<T, Alloc>::vector( const allocator_type &alloc )
+	:
+		_alloc( alloc ),
+		_start( NULL ),
+		_size( 0 ),
+		_capacity( 0 )
+	{}
+
+	template < class T, class Alloc >
+	ft::vector<T, Alloc>::vector( size_type count,
+							 const value_type &value,
+							 const allocator_type &alloc )
+	:
+		_alloc( alloc ),
+		_size( count )
+	{
+		_capacity = count;
+		_start = _alloc.allocate( _capacity );
+
+		for (iterator it = begin(); it != end(); ++it)
+			_alloc.construct( &(*it), value );
+	}
+
+	template < class T, class Alloc >
+	template < class InputIterator >
+	ft::vector<T, Alloc>::vector( InputIterator first, InputIterator last,
+					const allocator_type &alloc = allocator_type(),
+					typename ft::enable_if<!ft::is_integral<InputIterator>::value>::type * )
+	:
+		_alloc( alloc ),
+		_size( 0 )
+	{
+		for (InputIterator it; it != last; ++it)
+			++_size;
+		_capacity = _size;
+		_start = _alloc.allocate( _capacity );
+		for (iterator it = begin(); first !=  last; ++first, ++it)
+			*it = *first;
+	}
+
+
 
 
 	//MARK: - Not Member Functions
