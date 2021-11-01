@@ -41,7 +41,7 @@ namespace ft {
 		public:
 
 
-			//MARK: - Class Constructors ✓
+			// MARK: - Class Constructors ✓
 
 			explicit vector( const allocator_type &alloc = allocator_type() );
 
@@ -55,95 +55,40 @@ namespace ft {
 					typename ft::enable_if<!ft::is_integral<InputIterator>::value>::type * = 0 );
 
 
+			// MARK: - Class Copy Constructor ✓
 
-			//MARK: - Class Copy Constructor ✓
-
-			vector( const vector &src )
-			:
-				_alloc( src.alloc ),
-				_start( NULL ),
-				_size( src._size ),
-				_capacity( src._capacity )
-			{
-				insert( begin(), src.begin(), src.end() );
-			}
+			vector( const vector &src );
 
 
+			// MARK: - Class Assignation Overload ✓
 
-			//MARK: - Class Assignation Overload ✓
-
-			vector	&operator = ( const vector &src ) {
-				if (this != &src) {
-					clear();
-					insert( begin(), src.begin(), src.end() );
-				}
-				return *this;
-			}
+			vector	&operator = ( const vector &src );
 
 
+			// MARK: - Class Distructor ✓
 
-			//MARK: - Class Distructor ✓
-
-			~vector( void ) {
-				for (iterator it = begin(); it != end(); ++it)
-					_alloc.destroy( &(*it) );
-				_alloc.deallocate( _start, _capacity );
-			}
+			~vector( void );
 
 
+			// MARK: - Class Methods ( getters ) ✓
 
-			//MARK: - Class Methods ( getters ) ✓
-
-			allocator_type	get_allocator( void ) const {
-				return _alloc;
-			}
+			allocator_type	get_allocator( void ) const;
 
 
+			// MARK: - Class Methods ✓
 
-			//MARK: - Class Methods ✓
-
-			void	assign( size_type count, const value_type &value ) {
-				clear();
-				_size = count;
-				if (count > _capacity) {
-					_alloc.deallocate( _start, _capacity );
-					_capacity = _size;
-					_start = _alloc.allocate( _capacity );
-				}
-				for (iterator it = begin(); it != end(); ++it)
-					_alloc.construct( it.operator->() , value );
-			}
+			void	assign( size_type count, const value_type &value );
 
 			template < class InputIterator >
 			void	assign( InputIterator first, InputIterator last,
-							typename ft::enable_if<!ft::is_integral<InputIterator>::value>::type * = 0 ) {
-				clear();
-				for (InputIterator it = first; it != last; ++it)
-					++_size;
-				if ( _size > _capacity ) {
-					_alloc.deallocate( _start, _capacity );
-					_capacity = _size;
-					_start = _alloc.allocate( _capacity );
-				}
-				for (iterator it = begin(); first != last; ++it, ++first)
-					_alloc.construct( it.operator->(), *first );
-			}
+							typename ft::enable_if<!ft::is_integral<InputIterator>::value>::type * = 0 );
 
 
 
-			//MARK: - Class Element Access
+			// MARK: - Class Element Access
 
-			reference			at( size_type pos ) {
-				if (pos > _size)
-					throw std::out_of_range("vector index out of range");
-				return _start[pos];
-			}
-
-			const_reference		at( size_type pos ) const {
-				if (pos > _size)
-					throw std::out_of_range("vector index out of range");
-				return _start[pos];
-			}
+			reference			at( size_type pos );
+			const_reference		at( size_type pos ) const;
 
 			reference			operator [] ( size_type pos ) { return _start[pos]; }
 			const_reference		operator [] ( size_type pos ) const { return _start[pos]; }
@@ -159,23 +104,23 @@ namespace ft {
 
 
 
-			//MARK: - Iterators ✓
+			// MARK: - Iterators ✓
 
-			iterator				begin( void ) { return iterator( _start ); }
-			const_iterator			begin( void ) const { return const_iterator( _start ); }
+			iterator				begin( void );
+			const_iterator			begin( void ) const;
 
-			iterator				end( void ) { return iterator( _start + _size ); }
-			const_iterator			end( void ) const { return const_iterator( _start + _size ); }
+			iterator				end( void );
+			const_iterator			end( void ) const;
 
-			reverse_iterator		rbegin( void ) { return reverse_iterator( _start + _size ); }
-			const_reverse_iterator	rbegin( void ) const { return const_reverse_iterator( _start + _size ); }
+			reverse_iterator		rbegin( void );
+			const_reverse_iterator	rbegin( void ) const;
 
-			reverse_iterator		rend( void ) { return reverse_iterator( _start ); }
-			const_reverse_iterator	rend( void ) const { return const_reverse_iterator( _start ); }
+			reverse_iterator		rend( void );
+			const_reverse_iterator	rend( void ) const;
 
 
 
-			//MARK: - Capacity ✓
+			// MARK: - Capacity ✓
 
 			bool		empty( void ) const { return _size == 0; }
 			size_type	size( void ) const { return _size; }
@@ -197,7 +142,7 @@ namespace ft {
 			
 
 
-			//MARK: - Modifiers
+			// MARK: - Modifiers
 
 			void		clear( void ) {
 				for (iterator it = begin(); it != end(); ++it)
@@ -223,8 +168,10 @@ namespace ft {
 
 
 
+	
+	// MARK: - Class Constructors
 
-	//MARK: - Class Constructors
+	// » default constructor
 
 	template < class T, class Alloc >
 	ft::vector<T, Alloc>::vector( const allocator_type &alloc )
@@ -234,6 +181,8 @@ namespace ft {
 		_size( 0 ),
 		_capacity( 0 )
 	{}
+
+	// » count constructor
 
 	template < class T, class Alloc >
 	ft::vector<T, Alloc>::vector( size_type count,
@@ -247,13 +196,15 @@ namespace ft {
 		_start = _alloc.allocate( _capacity );
 
 		for (iterator it = begin(); it != end(); ++it)
-			_alloc.construct( &(*it), value );
+			_alloc.construct( it.operator->(), value );
 	}
+
+	// » range constructor
 
 	template < class T, class Alloc >
 	template < class InputIterator >
 	ft::vector<T, Alloc>::vector( InputIterator first, InputIterator last,
-					const allocator_type &alloc = allocator_type(),
+					const allocator_type &alloc,
 					typename ft::enable_if<!ft::is_integral<InputIterator>::value>::type * )
 	:
 		_alloc( alloc ),
@@ -263,14 +214,170 @@ namespace ft {
 			++_size;
 		_capacity = _size;
 		_start = _alloc.allocate( _capacity );
-		for (iterator it = begin(); first !=  last; ++first, ++it)
-			*it = *first;
+		for (iterator it = begin(); first != last; ++first, ++it)
+			_alloc.construct( it.operator->(), *first );
 	}
 
 
 
+	// MARK: - Class Copy Constructor
 
-	//MARK: - Not Member Functions
+	template < class T, class Alloc >
+	ft::vector<T, Alloc>::vector( const vector &src )
+	:
+		_alloc( src._alloc ),
+		_size( 0 ),
+		_capacity( 0 ),
+		_start( NULL )
+	{
+		insert( begin(), src.begin(), src.end() );
+	}
+
+
+
+	// MARK: - Class Assignation Overload
+
+	template < class T, class Alloc >
+	ft::vector<T, Alloc>
+	&ft::vector<T, Alloc>::operator = ( const vector &src ) {
+		if (this != &src) {
+			clear();
+			insert( begin(), src.begin(), src.end() );
+		}
+		return *this;
+	}
+
+
+
+	// MARK: - Class Distructor
+
+	template < class T, class Alloc >
+	ft::vector<T, Alloc>::~vector( void ) {
+		for (iterator it = begin(); it != end(); ++it)
+			_alloc.destroy( &(*it) );
+		_alloc.deallocate( _start, _capacity );
+	}
+
+
+
+	// MARK: - Class Methods ( getters )
+
+	template < class T, class Alloc >
+	typename ft::vector<T, Alloc>::allocator_type
+	ft::vector<T, Alloc>::get_allocator( void ) const {
+		return _alloc;
+	}
+
+
+
+	// MARK: - Class Methods
+
+	template < class T, class Alloc >
+	void	ft::vector<T, Alloc>::assign( size_type count, const value_type &value ) {
+		clear();
+		_size = count;
+		if (count > _capacity) {
+			_alloc.deallocate( _start, _capacity );
+			_capacity = _size;
+			_start = _alloc.allocate( _capacity );
+		}
+		for (iterator it = begin(); it != end(); ++it)
+			_alloc.construct( it.operator->() , value );
+	}
+
+	template < class T, class Alloc >
+	template < class InputIterator >
+	void	ft::vector<T, Alloc>::assign( InputIterator first, InputIterator last,
+										  typename ft::enable_if<!ft::is_integral<InputIterator>::value>::type * ) {
+		clear();
+		for (InputIterator it = first; it != last; ++it)
+			++_size;
+		if ( _size > _capacity ) {
+			_alloc.deallocate( _start, _capacity );
+			_capacity = _size;
+			_start = _alloc.allocate( _capacity );
+		}
+		for (iterator it = begin(); first != last; ++it, ++first)
+			_alloc.construct( it.operator->(), *first );
+	}
+
+
+
+	// MARK: - Class Element Access
+
+	template < class T, class Alloc >
+	typename ft::vector<T, Alloc>::reference
+	ft::vector<T, Alloc>::at( size_type pos ) {
+		if (pos > _size)
+			throw std::out_of_range("vector index out of range");
+		return _start[pos];
+	}
+
+	template < class T, class Alloc >
+	typename ft::vector<T, Alloc>::const_reference
+	ft::vector<T, Alloc>::at( size_type pos ) const {
+		if (pos > _size)
+			throw std::out_of_range("vector index out of range");
+		return _start[pos];
+	}
+
+
+
+	// MARK: - Iterators
+
+	template < class T, class Alloc >
+	typename ft::vector<T, Alloc>::iterator
+	ft::vector<T, Alloc>::begin( void ) {
+		return iterator( _start );
+	}
+
+	template < class T, class Alloc >
+	typename ft::vector<T, Alloc>::const_iterator
+	ft::vector<T, Alloc>::begin( void ) const {
+		return iterator( _start );
+	}
+	
+	template < class T, class Alloc >
+	typename ft::vector<T, Alloc>::iterator
+	ft::vector<T, Alloc>::end( void ) {
+		return iterator( _start + _size );
+	}
+
+	template < class T, class Alloc >
+	typename ft::vector<T, Alloc>::const_iterator
+	ft::vector<T, Alloc>::end( void ) const {
+		return iterator( _start + _size );
+	}
+
+	template < class T, class Alloc >
+	typename ft::vector<T, Alloc>::reverse_iterator
+	ft::vector<T, Alloc>::rbegin( void ) {
+		return reverse_iterator( _start + _size );
+	}
+
+	template < class T, class Alloc >
+	typename ft::vector<T, Alloc>::const_reverse_iterator
+	ft::vector<T, Alloc>::rbegin( void ) const {
+		return reverse_iterator( _start + _size );
+	}
+
+	template < class T, class Alloc >
+	typename ft::vector<T, Alloc>::reverse_iterator
+	ft::vector<T, Alloc>::rend( void ) {
+		return reverse_iterator( _start );
+	}
+
+	template < class T, class Alloc >
+	typename ft::vector<T, Alloc>::const_reverse_iterator
+	ft::vector<T, Alloc>::rend( void ) const {
+		return reverse_iterator( _start );
+	}
+
+
+
+	// ---------------------------------------------------------------------------------------------------------------------------------
+
+	// MARK: - Not Member Functions
 
 	template < class T, class Alloc >
 	bool	operator == ( const ft::vector<T, Alloc> &lhs, const ft::vector<T, Alloc> &rhs ) {
