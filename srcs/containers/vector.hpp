@@ -84,24 +84,19 @@ namespace ft {
 							typename ft::enable_if<!ft::is_integral<InputIterator>::value>::type * = 0 );
 
 
-
 			// MARK: - Class Element Access
 
 			reference			at( size_type pos );
 			const_reference		at( size_type pos ) const;
 
-			reference			operator [] ( size_type pos ) { return _start[pos]; }
-			const_reference		operator [] ( size_type pos ) const { return _start[pos]; }
+			reference			operator [] ( size_type pos );
+			const_reference		operator [] ( size_type pos ) const;
 
-			reference			front( void ) { return *begin(); }
-			const_reference		front( void ) const { return *begin(); }
+			reference			front( void );
+			const_reference		front( void ) const;
 
-			reference			back( void ) { return *(end() - 1); }
-			const_reference		back( void ) const { return *(end() - 1); }
-
-			value_type			*data( void ) { return _start; }
-			const value_type	*data( void ) const { return _start; }
-
+			reference			back( void );
+			const_reference		back( void ) const;
 
 
 			// MARK: - Iterators ✓
@@ -119,36 +114,18 @@ namespace ft {
 			const_reverse_iterator	rend( void ) const;
 
 
-
 			// MARK: - Capacity ✓
 
-			bool		empty( void ) const { return _size == 0; }
-			size_type	size( void ) const { return _size; }
-			size_type	max_size( void ) const { return _alloc.max_size(); }
-			size_type	capacity( void ) const { return _capacity; }
+			bool		empty( void ) const;
+			size_type	size( void ) const;
+			size_type	max_size( void ) const;
+			size_type	capacity( void ) const;		
+			void		reserve( size_type new_cap );
 			
-			void		reserve( size_type new_cap ) {
-				if (new_cap < _capacity)
-					return;
-				pointer	new_start = _alloc.allocate( new_cap );
-				for(size_type i = 0; i < _size; ++i) {
-					_alloc.construct( new_start + i, _start[i] );
-					_alloc.destroy( _start + i );
-				}
-				_alloc.deallocate( _start, _capacity );
-				_start = new_start;
-				_capacity = new_cap;
-			}
-			
-
 
 			// MARK: - Modifiers
 
-			void		clear( void ) {
-				for (iterator it = begin(); it != end(); ++it)
-					_alloc.destroy( it.operator->() );
-				_size = 0;
-			}
+			void		clear( void );
 
 			iterator	insert( iterator pos, const value_type &value );
 			void		insert( iterator pos, size_type count, const value_type &value );
@@ -321,6 +298,42 @@ namespace ft {
 		return _start[pos];
 	}
 
+	template < class T, class Alloc >
+	typename ft::vector<T, Alloc>::reference
+	ft::vector<T, Alloc>::operator [] ( size_type pos ) {
+		return _start[pos];
+	}
+
+	template < class T, class Alloc >
+	typename ft::vector<T, Alloc >::const_reference
+	ft::vector<T, Alloc>::operator [] ( size_type pos ) const {
+		return _start[pos];
+	}
+
+	template < class T, class Alloc >
+	typename ft::vector<T, Alloc>::reference
+	ft::vector<T, Alloc>::front( void ) {
+		return *begin();
+	}
+
+	template < class T, class Alloc >
+	typename ft::vector<T, Alloc>::const_reference
+	ft::vector<T, Alloc>::front( void ) const {
+		return *begin();
+	}
+
+	template < class T, class Alloc >
+	typename ft::vector<T, Alloc>::reference
+	ft::vector<T, Alloc>::back( void ) {
+		return *(end() - 1);
+	}
+
+	template < class T, class Alloc >
+	typename ft::vector<T, Alloc>::const_reference
+	ft::vector<T, Alloc>::back( void ) const {
+		return *(end() - 1);
+	}
+
 
 
 	// MARK: - Iterators
@@ -371,6 +384,58 @@ namespace ft {
 	typename ft::vector<T, Alloc>::const_reverse_iterator
 	ft::vector<T, Alloc>::rend( void ) const {
 		return reverse_iterator( _start );
+	}
+
+
+
+	// MARK: - Capacity
+
+	template < class T, class Alloc >
+	bool	ft::vector<T, Alloc>::empty( void ) const {
+		return _size == 0;
+	}
+
+	template < class T, class Alloc >
+	typename ft::vector<T, Alloc>::size_type
+	ft::vector<T, Alloc>::size( void ) const {
+		return _size;
+	}
+
+	template < class T, class Alloc >
+	typename ft::vector<T, Alloc>::size_type
+	ft::vector<T, Alloc>::max_size( void ) const {
+		return _alloc.max_size();
+	}
+
+	template < class T, class Alloc >
+	typename ft::vector<T, Alloc>::size_type
+	ft::vector<T, Alloc>::capacity( void ) const {
+		return _capacity;
+	}
+
+	template < class T, class Alloc >
+	void	ft::vector<T, Alloc>::reserve( size_type new_cap ) {
+		if (new_cap < _capacity)
+			return;
+		pointer	new_start = _alloc.allocate( new_cap );
+		for(size_type i = 0; i < _size; ++i) {
+			_alloc.construct( new_start + i, _start[i] );
+			_alloc.destroy( _start + i );
+		}
+		_alloc.deallocate( _start, _capacity );
+		_start = new_start;
+		_capacity = new_cap;
+	}
+
+
+
+	// MARK: - Modifiers
+
+	template < class T, class Alloc >
+	void	ft::vector<T, Alloc>::clear( void ) {
+		for (iterator it = begin(); it != end(); ++it)
+			_alloc.destroy( it.operator->() );
+		_size = 0;
 	}
 
 
