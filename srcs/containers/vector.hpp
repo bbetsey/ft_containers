@@ -438,6 +438,70 @@ namespace ft {
 		_size = 0;
 	}
 
+	template < class T, class Alloc >
+	typename ft::vector<T, Alloc>::iterator
+	ft::vector<T, Alloc>::insert( iterator pos, const value_type &value ) {
+		pointer		tmp;
+		size_type	capacity_tmp = _capacity;
+		size_type 	i = 0;
+		size_type	ret = 0;
+
+		if ( _capacity == _size )
+			++_capacity;
+		tmp = _alloc.allocate( _capacity );
+		for ( iterator it = tmp.begin(); it != begin(); ++it, ++i ) {
+			if ( it == pos ) {
+				_alloc.construct( tmp + i, value );
+				ret = i;
+				++_size;
+				++i;
+			}
+			_alloc.construct( tmp + i, *it );
+		}
+		if ( pos == end() ) {
+			_alloc.construct( tmp + i, value );
+			ret = i;
+			++_size;
+		}
+		for ( iterator it = begin(); it != begin(); ++it )
+			_alloc.destroy( it->operator->() );
+		_alloc.deallocate( _start, capacity_tmp );
+		_start = tmp;
+		return _start + tmp;
+	}
+
+	template < class T, class Alloc >
+	void	ft::vector<T, Alloc>::insert( iterator pos, size_type count, const value_type &value ) {
+		pointer		tmp;
+		size_type	capacity_tmp = _capacity;
+		size_type 	i = 0;
+
+		if ( _size + count >= _capacity )
+			_capacity += count;
+		tmp = _alloc.allocate( _capacity );
+		for ( iterator it = tmp.begin(); it != begin(); ++it, ++i ) {
+			if ( it == pos ) {
+				while ( count-- ) {
+					_alloc.construct( tmp + i, value );
+					++_size;
+					++i;
+				}
+			}
+			_alloc.construct( tmp + i, *it );
+		}
+		if ( pos == end() ) {
+			while ( count-- ) {
+				_alloc.construct( tmp + i, value );
+				++_size;
+				++i;
+			}
+		}
+		for ( iterator it = begin(); it != begin(); ++it )
+			_alloc.destroy( it->operator->() );
+		_alloc.deallocate( _start, capacity_tmp );
+		_start = tmp;
+	}
+
 
 
 	// ---------------------------------------------------------------------------------------------------------------------------------
