@@ -449,25 +449,27 @@ namespace ft {
 		if ( _capacity == _size )
 			++_capacity;
 		tmp = _alloc.allocate( _capacity );
-		for ( iterator it = tmp.begin(); it != begin(); ++it, ++i ) {
+		for ( iterator it = begin(); it != end(); ++it, ++i ) {
 			if ( it == pos ) {
 				_alloc.construct( tmp + i, value );
+				std::cout << *(tmp + i) << std::endl;
 				ret = i;
 				++_size;
 				++i;
 			}
 			_alloc.construct( tmp + i, *it );
+			std::cout << *(tmp + i) << std::endl;
 		}
 		if ( pos == end() ) {
 			_alloc.construct( tmp + i, value );
 			ret = i;
 			++_size;
 		}
-		for ( iterator it = begin(); it != begin(); ++it )
-			_alloc.destroy( it->operator->() );
+		// for ( iterator it = begin(); it != end(); ++it )
+		// 	_alloc.destroy( it->operator->() );
 		_alloc.deallocate( _start, capacity_tmp );
 		_start = tmp;
-		return _start + tmp;
+		return _start + ret;
 	}
 
 	template < class T, class Alloc >
@@ -479,7 +481,7 @@ namespace ft {
 		if ( _size + count >= _capacity )
 			_capacity += count;
 		tmp = _alloc.allocate( _capacity );
-		for ( iterator it = tmp.begin(); it != begin(); ++it, ++i ) {
+		for ( iterator it = begin(); it != end(); ++it, ++i ) {
 			if ( it == pos ) {
 				while ( count-- ) {
 					_alloc.construct( tmp + i, value );
@@ -496,7 +498,7 @@ namespace ft {
 				++i;
 			}
 		}
-		for ( iterator it = begin(); it != begin(); ++it )
+		for ( iterator it = begin(); it != end(); ++it )
 			_alloc.destroy( it->operator->() );
 		_alloc.deallocate( _start, capacity_tmp );
 		_start = tmp;

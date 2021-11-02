@@ -31,11 +31,31 @@ int	main( void ) {
 	std::cout << "Capacity: " << vec.capacity() << std::endl;
 
 	std::vector<int> vec_origin;
-	vec_origin.assign( 20, 7 );
+	vec_origin.assign( 10, 7 );
 	vec.assign( vec_origin.begin(), vec_origin.end() );
 	std::cout << "10 element is " << vec.at( 10 ) << std::endl;
 	std::cout << "Size: " << vec.size() << std::endl;
 	std::cout << "Capacity: " << vec.capacity() << std::endl;
+
+	std::cout << "\n----- Insert testing -----" << std::endl;
+	vec.clear();
+	vec.assign( 10, 5 );
+	ft::vector<int>::iterator	it = vec.begin();
+
+	for (; it != vec.end(); ++it)
+		std::cout << *it << " ";
+
+	it = vec.begin();
+	vec.insert( it + 4, 2 );
+	it = vec.begin();
+	std::cout << "New size: " << vec.size() << std::endl;
+	std::cout << "New capacity: " << vec.capacity() << std::endl;
+	std::cout << vec.begin() - vec.end() << std::endl;
+	std::cout << *it << std::endl;
+	for (; it != vec.end(); ++it)
+		std::cout << *it << " ";
+	
+	std::cout << std::endl << std::endl;
 
 	return 0;
 }
