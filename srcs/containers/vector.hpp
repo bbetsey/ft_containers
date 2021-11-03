@@ -131,7 +131,8 @@ namespace ft {
 			void		insert( iterator pos, size_type count, const value_type &value );
 
 			template < class InputIterator >
-			void		insert( iterator pos, InputIterator first, InputIterator last );
+			void		insert( iterator pos, InputIterator first, InputIterator last,
+								typename ft::enable_if<!ft::is_integral<InputIterator>::value>::type * = 0 );
 
 			iterator	erase( iterator pos );
 			iterator	erase( iterator first, iterator last );
@@ -203,9 +204,9 @@ namespace ft {
 	ft::vector<T, Alloc>::vector( const vector &src )
 	:
 		_alloc( src._alloc ),
+		_start( NULL ),
 		_size( 0 ),
-		_capacity( 0 ),
-		_start( NULL )
+		_capacity( 0 )
 	{
 		insert( begin(), src.begin(), src.end() );
 	}
@@ -434,7 +435,7 @@ namespace ft {
 	template < class T, class Alloc >
 	void	ft::vector<T, Alloc>::clear( void ) {
 		for (iterator it = begin(); it != end(); ++it)
-			_alloc.destroy( it.operator->() );
+			_alloc.destroy( it.getPointer() );
 		_size = 0;
 	}
 
@@ -465,8 +466,8 @@ namespace ft {
 			ret = i;
 			++_size;
 		}
-		// for ( iterator it = begin(); it != end(); ++it )
-		// 	_alloc.destroy( it->operator->() );
+		for ( iterator it = begin(); it != end(); ++it )
+			_alloc.destroy( it.getPointer() );
 		_alloc.deallocate( _start, capacity_tmp );
 		_start = tmp;
 		return _start + ret;
@@ -499,10 +500,121 @@ namespace ft {
 			}
 		}
 		for ( iterator it = begin(); it != end(); ++it )
-			_alloc.destroy( it->operator->() );
+			_alloc.destroy( it.getPointer() );
 		_alloc.deallocate( _start, capacity_tmp );
 		_start = tmp;
 	}
+
+	template < class T, class Alloc >
+	template < class InputIterator >
+	void	ft::vector<T, Alloc>::insert( iterator pos, InputIterator first, InputIterator last,
+											typename ft::enable_if<!ft::is_integral<InputIterator>::value>::type * ) {
+		if ( last - first < 0 )
+			return;
+		
+		difference_type	range = last - first;
+		size_type		capacity_tmp = _capacity;
+		size_type		i = 0;
+		pointer			tmp;
+
+		if ( _size + range >= _capacity )
+			_capacity += range;
+		tmp = _alloc.allocate( _capacity );
+
+		for (iterator it = begin(); it != end(); ++it, ++i ) {
+			if ( it == pos ) {
+				for (; first != last; ++first, ++i )
+					_alloc.construct( tmp + i, *first );
+				_size += range;
+			}
+			_alloc.construct( tmp + i, *it );
+		}
+
+		if ( pos == end() ) {
+			for (; first != last; ++first, ++i )
+				_alloc.construct( tmp + i, *first );
+			_size += range;
+		}
+
+		for ( iterator it = begin(); it != end(); ++it )
+			_alloc.destroy( it.getPointer() );
+		_alloc.deallocate( _start, capacity_tmp );
+		_start = tmp;
+	}
+
+	template < class T, class Alloc >
+	typename ft::vector<T, Alloc>::iterator
+	ft::vector<T, Alloc>::erase( iterator pos ) {
+		iterator	start = pos;
+
+		for ( ; pos + 1 != end(); ++pos )
+			*pos = *( pos + 1 );
+		--_size;
+		return pos;
+	}
+
+	template < class T, class Alloc >
+	typename ft::vector<T, Alloc>::iterator
+	ft::vector<T, Alloc>::erase( iterator first, iterator last ) {
+		
+		if ( first - begin() < 0 || end() - first < 0 )
+			return first;
+		if ( last - begin() < 0 || end() - last < 0 )
+			return first;
+
+		typename ft::vector<T, Alloc>::difference_type	range = last - first;
+
+		if ( end() - last <= 1 ) {
+			_size -= range;
+			return first;
+		}
+
+		iterator copy = first;
+		for (; last != end(); ++last, ++copy )
+			*copy = *last;
+		_size -= range;
+		return first;
+	}
+
+	template < class T, class Alloc >
+	void	ft::vector<T, Alloc>::push_back( const value_type &value ) {
+		if ( _capacity == _size )
+			reserve( _size + 1 );
+		*( end() ) = value;
+		++_size;
+	}
+
+	template < class T, class Alloc >
+	void	ft::vector<T, Alloc>::pop_back( void ) {
+		erase( end() - 1 );
+	}
+
+	template < class T, class Alloc >
+	void	ft::vector<T, Alloc>::resize( size_type count, value_type value ) {
+		if ( _capacity < _size + count )
+			reserve( _capacity + count );
+		while ( count-- )
+			push_back( value );
+	}
+
+	template < class T, class Alloc >
+	void	ft::vector<T, Alloc>::swap( vector &src ) {
+		if ( this == &src || *this == src )
+			return;
+
+		size_type	tmp_size = _size;
+		size_type	tmp_capacity = _capacity;
+		pointer		tmp_start = _start;
+
+		_size = src._size;
+		_capacity = src._capacity;
+		_start = src._start;
+
+		src._size = tmp_size;
+		src._capacity = tmp_capacity;
+		src._start = tmp_start;
+	}
+
 
 
 

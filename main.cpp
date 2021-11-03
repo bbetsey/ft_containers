@@ -54,6 +54,30 @@ int	main( void ) {
 	std::cout << *it << std::endl;
 	for (; it != vec.end(); ++it)
 		std::cout << *it << " ";
+
+	std::cout << "\n** Range Insert **" << std::endl;
+
+	std::vector<int>::iterator	it_origin = vec_origin.begin();
+	for (; it_origin != vec_origin.end(); ++it_origin)
+		std::cout << *it_origin << " ";
+	std::cout << std::endl;
+
+	it = vec.begin();
+	it_origin = vec_origin.begin();
+	vec.insert( it + 7, vec_origin.begin(), vec_origin.end() );
+
+	std::cout << "New size: " << vec.size() << std::endl;
+	
+	it = vec.begin();
+	for (; it != vec.end(); ++it)
+		std::cout << *it << " ";
+	
+
+	std::cout << "\n----- Erase Testing -----" << std::endl;
+	vec.erase( vec.begin() + 3, vec.begin() +7 );
+	it = vec.begin();
+	for (; it != vec.end(); ++it)
+		std::cout << *it << " ";
 	
 	std::cout << std::endl << std::endl;
 
