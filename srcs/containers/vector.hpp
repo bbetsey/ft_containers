@@ -188,12 +188,12 @@ namespace ft {
 		_alloc( alloc ),
 		_size( 0 )
 	{
-		for (InputIterator it; it != last; ++it)
+		for ( InputIterator it = first; it != last; ++it )
 			++_size;
 		_capacity = _size;
 		_start = _alloc.allocate( _capacity );
 		for (iterator it = begin(); first != last; ++first, ++it)
-			_alloc.construct( it.operator->(), *first );
+			_alloc.construct( it.getPointer(), *first );
 	}
 
 
@@ -232,7 +232,7 @@ namespace ft {
 	template < class T, class Alloc >
 	ft::vector<T, Alloc>::~vector( void ) {
 		for (iterator it = begin(); it != end(); ++it)
-			_alloc.destroy( &(*it) );
+			_alloc.destroy( it.getPointer() );
 		_alloc.deallocate( _start, _capacity );
 	}
 
@@ -256,13 +256,13 @@ namespace ft {
 	void	ft::vector<T, Alloc>::assign( size_type count, const value_type &value ) {
 		clear();
 		_size = count;
-		if (count > _capacity) {
+		if ( count > _capacity ) {
 			_alloc.deallocate( _start, _capacity );
 			_capacity = _size;
 			_start = _alloc.allocate( _capacity );
 		}
 		for (iterator it = begin(); it != end(); ++it)
-			_alloc.construct( it.operator->() , value );
+			_alloc.construct( it.getPointer() , value );
 	}
 
 	// » assign ( some difference values )
@@ -272,7 +272,7 @@ namespace ft {
 	void	ft::vector<T, Alloc>::assign( InputIterator first, InputIterator last,
 										  typename ft::enable_if<!ft::is_integral<InputIterator>::value>::type * ) {
 		clear();
-		for (InputIterator it = first; it != last; ++it)
+		for ( InputIterator it = first; it != last; ++it )
 			++_size;
 		if ( _size > _capacity ) {
 			_alloc.deallocate( _start, _capacity );
@@ -280,7 +280,7 @@ namespace ft {
 			_start = _alloc.allocate( _capacity );
 		}
 		for (iterator it = begin(); first != last; ++it, ++first)
-			_alloc.construct( it.operator->(), *first );
+			_alloc.construct( it.getPointer(), *first );
 	}
 
 
@@ -512,6 +512,7 @@ namespace ft {
 	template < class T, class Alloc >
 	void	ft::vector<T, Alloc>::insert( iterator pos, size_type count, const value_type &value ) {
 		pointer		tmp;
+		size_type	insert_size = 0;
 		size_type	capacity_tmp = _capacity;
 		size_type 	i = 0;
 
@@ -522,7 +523,7 @@ namespace ft {
 			if ( it == pos ) {
 				while ( count-- ) {
 					_alloc.construct( tmp + i, value );
-					++_size;
+					++insert_size;
 					++i;
 				}
 			}
@@ -531,13 +532,14 @@ namespace ft {
 		if ( pos == end() ) {
 			while ( count-- ) {
 				_alloc.construct( tmp + i, value );
-				++_size;
+				++insert_size;
 				++i;
 			}
 		}
 		for ( iterator it = begin(); it != end(); ++it )
 			_alloc.destroy( it.getPointer() );
 		_alloc.deallocate( _start, capacity_tmp );
+		_size += insert_size;
 		_start = tmp;
 	}
 
@@ -547,10 +549,11 @@ namespace ft {
 	template < class InputIterator >
 	void	ft::vector<T, Alloc>::insert( iterator pos, InputIterator first, InputIterator last,
 											typename ft::enable_if<!ft::is_integral<InputIterator>::value>::type * ) {
-		if ( last - first < 0 )
-			return;
-		
-		difference_type	range = last - first;
+		difference_type	range = 0;
+		for ( InputIterator tmp = first; tmp != last; ++tmp )
+			++range;
+
+		size_type		insert_size = 0;
 		size_type		capacity_tmp = _capacity;
 		size_type		i = 0;
 		pointer			tmp;
@@ -563,7 +566,7 @@ namespace ft {
 			if ( it == pos ) {
 				for (; first != last; ++first, ++i )
 					_alloc.construct( tmp + i, *first );
-				_size += range;
+				insert_size += range;
 			}
 			_alloc.construct( tmp + i, *it );
 		}
@@ -571,12 +574,13 @@ namespace ft {
 		if ( pos == end() ) {
 			for (; first != last; ++first, ++i )
 				_alloc.construct( tmp + i, *first );
-			_size += range;
+			insert_size += range;
 		}
 
 		for ( iterator it = begin(); it != end(); ++it )
 			_alloc.destroy( it.getPointer() );
 		_alloc.deallocate( _start, capacity_tmp );
+		_size += insert_size;
 		_start = tmp;
 	}
 

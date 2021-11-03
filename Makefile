@@ -1,5 +1,5 @@
 NAME	= containers
-SRCS	= main.cpp test/vector_test.cpp
+SRCS	= main.cpp 
 
 OBJS	= $(SRCS:.cpp=.o)
 INC		= -I srcs/containers/ -I srcs/iterators/ -I srcs/utils/
