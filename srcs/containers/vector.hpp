@@ -250,6 +250,8 @@ namespace ft {
 
 	// MARK: - Class Methods
 
+	// » assign ( some identical values )
+
 	template < class T, class Alloc >
 	void	ft::vector<T, Alloc>::assign( size_type count, const value_type &value ) {
 		clear();
@@ -262,6 +264,8 @@ namespace ft {
 		for (iterator it = begin(); it != end(); ++it)
 			_alloc.construct( it.operator->() , value );
 	}
+
+	// » assign ( some difference values )
 
 	template < class T, class Alloc >
 	template < class InputIterator >
@@ -283,6 +287,8 @@ namespace ft {
 
 	// MARK: - Class Element Access
 
+	// » at
+
 	template < class T, class Alloc >
 	typename ft::vector<T, Alloc>::reference
 	ft::vector<T, Alloc>::at( size_type pos ) {
@@ -299,6 +305,8 @@ namespace ft {
 		return _start[pos];
 	}
 
+	// » operator []
+
 	template < class T, class Alloc >
 	typename ft::vector<T, Alloc>::reference
 	ft::vector<T, Alloc>::operator [] ( size_type pos ) {
@@ -311,6 +319,8 @@ namespace ft {
 		return _start[pos];
 	}
 
+	// » front
+
 	template < class T, class Alloc >
 	typename ft::vector<T, Alloc>::reference
 	ft::vector<T, Alloc>::front( void ) {
@@ -322,6 +332,8 @@ namespace ft {
 	ft::vector<T, Alloc>::front( void ) const {
 		return *begin();
 	}
+
+	// » back
 
 	template < class T, class Alloc >
 	typename ft::vector<T, Alloc>::reference
@@ -339,6 +351,8 @@ namespace ft {
 
 	// MARK: - Iterators
 
+	// » begin
+
 	template < class T, class Alloc >
 	typename ft::vector<T, Alloc>::iterator
 	ft::vector<T, Alloc>::begin( void ) {
@@ -350,6 +364,8 @@ namespace ft {
 	ft::vector<T, Alloc>::begin( void ) const {
 		return iterator( _start );
 	}
+
+	// » end
 	
 	template < class T, class Alloc >
 	typename ft::vector<T, Alloc>::iterator
@@ -363,6 +379,8 @@ namespace ft {
 		return iterator( _start + _size );
 	}
 
+	// » rbegin
+
 	template < class T, class Alloc >
 	typename ft::vector<T, Alloc>::reverse_iterator
 	ft::vector<T, Alloc>::rbegin( void ) {
@@ -374,6 +392,8 @@ namespace ft {
 	ft::vector<T, Alloc>::rbegin( void ) const {
 		return reverse_iterator( _start + _size );
 	}
+
+	// » rend
 
 	template < class T, class Alloc >
 	typename ft::vector<T, Alloc>::reverse_iterator
@@ -391,10 +411,14 @@ namespace ft {
 
 	// MARK: - Capacity
 
+	// » empty
+
 	template < class T, class Alloc >
 	bool	ft::vector<T, Alloc>::empty( void ) const {
 		return _size == 0;
 	}
+
+	// » size
 
 	template < class T, class Alloc >
 	typename ft::vector<T, Alloc>::size_type
@@ -402,17 +426,23 @@ namespace ft {
 		return _size;
 	}
 
+	// » max_size
+
 	template < class T, class Alloc >
 	typename ft::vector<T, Alloc>::size_type
 	ft::vector<T, Alloc>::max_size( void ) const {
 		return _alloc.max_size();
 	}
 
+	// » capacity
+
 	template < class T, class Alloc >
 	typename ft::vector<T, Alloc>::size_type
 	ft::vector<T, Alloc>::capacity( void ) const {
 		return _capacity;
 	}
+
+	// » reserve
 
 	template < class T, class Alloc >
 	void	ft::vector<T, Alloc>::reserve( size_type new_cap ) {
@@ -432,12 +462,16 @@ namespace ft {
 
 	// MARK: - Modifiers
 
+	// » clear
+
 	template < class T, class Alloc >
 	void	ft::vector<T, Alloc>::clear( void ) {
 		for (iterator it = begin(); it != end(); ++it)
 			_alloc.destroy( it.getPointer() );
 		_size = 0;
 	}
+
+	// » insert ( one value )
 
 	template < class T, class Alloc >
 	typename ft::vector<T, Alloc>::iterator
@@ -473,6 +507,8 @@ namespace ft {
 		return _start + ret;
 	}
 
+	// » insert ( some identical values )
+
 	template < class T, class Alloc >
 	void	ft::vector<T, Alloc>::insert( iterator pos, size_type count, const value_type &value ) {
 		pointer		tmp;
@@ -504,6 +540,8 @@ namespace ft {
 		_alloc.deallocate( _start, capacity_tmp );
 		_start = tmp;
 	}
+
+	// » insert ( some difference values )
 
 	template < class T, class Alloc >
 	template < class InputIterator >
@@ -542,6 +580,8 @@ namespace ft {
 		_start = tmp;
 	}
 
+	// » erase ( one element )
+
 	template < class T, class Alloc >
 	typename ft::vector<T, Alloc>::iterator
 	ft::vector<T, Alloc>::erase( iterator pos ) {
@@ -552,6 +592,8 @@ namespace ft {
 		--_size;
 		return pos;
 	}
+
+	// » erase ( some elements )
 
 	template < class T, class Alloc >
 	typename ft::vector<T, Alloc>::iterator
@@ -576,6 +618,8 @@ namespace ft {
 		return first;
 	}
 
+	// » push back
+
 	template < class T, class Alloc >
 	void	ft::vector<T, Alloc>::push_back( const value_type &value ) {
 		if ( _capacity == _size )
@@ -584,10 +628,14 @@ namespace ft {
 		++_size;
 	}
 
+	// » pop_back
+
 	template < class T, class Alloc >
 	void	ft::vector<T, Alloc>::pop_back( void ) {
 		erase( end() - 1 );
 	}
+
+	// » resize
 
 	template < class T, class Alloc >
 	void	ft::vector<T, Alloc>::resize( size_type count, value_type value ) {
@@ -596,6 +644,8 @@ namespace ft {
 		while ( count-- )
 			push_back( value );
 	}
+
+	// » swap
 
 	template < class T, class Alloc >
 	void	ft::vector<T, Alloc>::swap( vector &src ) {
@@ -622,6 +672,8 @@ namespace ft {
 
 	// MARK: - Not Member Functions
 
+	// » operator ==
+
 	template < class T, class Alloc >
 	bool	operator == ( const ft::vector<T, Alloc> &lhs, const ft::vector<T, Alloc> &rhs ) {
 		if (lhs.size() != rhs.size())
@@ -637,15 +689,21 @@ namespace ft {
 		return true;
 	}
 
+	// » operator !=
+
 	template < class T, class Alloc >
 	bool	operator != ( const ft::vector<T, Alloc> &lhs, const ft::vector<T, Alloc> &rhs ) {
 		return !(lhs == rhs);
 	}
 
+	// » operator >
+
 	template < class T, class Alloc >
 	bool	operator > ( const ft::vector<T, Alloc> &lhs, const ft::vector<T, Alloc> &rhs ) {
 		return !ft::lexicographical_compare( lhs.begin(), lhs.end(), rhs.begin(), rhs.end() );
 	}
+
+	// » operator >=
 
 	template < class T, class Alloc >
 	bool	operator >= ( const ft::vector<T, Alloc> &lhs, const ft::vector<T, Alloc> &rhs ) {
@@ -654,10 +712,14 @@ namespace ft {
 		return !ft::lexicographical_compare( lhs.begin(), lhs.end(), rhs.begin(), rhs.end() );
 	}
 
+	// » operator <
+
 	template < class T, class Alloc >
 	bool	operator < ( const ft::vector<T, Alloc> &lhs, const ft::vector<T, Alloc> &rhs ) {
 		return ft::lexicographical_compare( lhs.begin(), lhs.end(), rhs.begin(), rhs.end() );
 	}
+
+	// » operator <=
 
 	template < class T, class Alloc >
 	bool	operator <= ( const ft::vector<T, Alloc> &lhs, const ft::vector<T, Alloc> &rhs ) {
@@ -665,6 +727,8 @@ namespace ft {
 			return true;
 		return ft::lexicographical_compare( lhs.begin(), lhs.end(), rhs.begin(), rhs.end() );
 	}
+
+	// » swap
 
 	template < class T, class Alloc >
 	void	swap( ft::vector<T, Alloc> &lhs, ft::vector<T, Alloc> &rhs ) {
