@@ -101,8 +101,11 @@ void	constructorsTest( void ) {
 	}
 
 	{
-		ft::vector<T>	vec( 10 );
-		std::vector<T>	orig( 10 );
+		ft::vector<T>	tmp( 10 );
+		std::vector<T>	tmp_orig( 10 );
+
+		ft::vector<T>	vec( tmp.begin(), tmp.end() );
+		std::vector<T>	orig( tmp_orig.begin(), tmp_orig.end() );
 
 		std::cout << MAGENTA << "- Range Constructor » " << RESET;
 		result( vec, orig );
