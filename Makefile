@@ -1,8 +1,8 @@
 NAME	= containers
-SRCS	= main.cpp 
+SRCS	= main.cpp test/vector_test.cpp
 
 OBJS	= $(SRCS:.cpp=.o)
-INC		= -I srcs/containers/ -I srcs/iterators/ -I srcs/utils/
+INC		= -I srcs/containers/ -I srcs/iterators/ -I srcs/utils/ -I test/
 FLAGS	= -Wall -Wextra -Werror -std=c++98
 
 all: $(NAME)

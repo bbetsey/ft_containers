@@ -471,7 +471,7 @@ namespace ft {
 		_size = 0;
 	}
 
-	// » insert ( one value )
+	// » insert ( value )
 
 	template < class T, class Alloc >
 	typename ft::vector<T, Alloc>::iterator
@@ -543,7 +543,7 @@ namespace ft {
 		_start = tmp;
 	}
 
-	// » insert ( some difference values )
+	// » insert ( range )
 
 	template < class T, class Alloc >
 	template < class InputIterator >
