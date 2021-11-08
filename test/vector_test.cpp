@@ -55,7 +55,7 @@ void	assignTest( void ) {
 		vec.assign( 10, value );
 		orig.assign( 10, value );
 
-		std::cout << MAGENTA << "- Value » " << RESET;
+		std::cout << MAGENTA << "Value » " << RESET;
 		result( vec, orig );
 		printVector( vec, orig );
 	}
@@ -69,7 +69,7 @@ void	assignTest( void ) {
 		vec.assign( tmp.begin(), tmp.end() );
 		orig.assign( tmp.begin(), tmp.end() );
 
-		std::cout << MAGENTA << "- Range » " << RESET;
+		std::cout << MAGENTA << "Range » " << RESET;
 		result( vec, orig );
 		printVector( vec, orig );
 	}
@@ -86,7 +86,7 @@ void	constructorsTest( void ) {
 		ft::vector<T>	vec;
 		std::vector<T>	orig;
 
-		std::cout << MAGENTA << "- Default Constructor » " << RESET;
+		std::cout << MAGENTA << "Default Constructor » " << RESET;
 		result( vec, orig );
 		printVector( vec, orig );
 	}
@@ -95,7 +95,7 @@ void	constructorsTest( void ) {
 		ft::vector<T>	vec( 10 );
 		std::vector<T>	orig( 10 );
 
-		std::cout << MAGENTA << "- Count Constructor » " << RESET;
+		std::cout << MAGENTA << "Count Constructor » " << RESET;
 		result( vec, orig );
 		printVector( vec, orig );
 	}
@@ -107,7 +107,7 @@ void	constructorsTest( void ) {
 		ft::vector<T>	vec( tmp.begin(), tmp.end() );
 		std::vector<T>	orig( tmp_orig.begin(), tmp_orig.end() );
 
-		std::cout << MAGENTA << "- Range Constructor » " << RESET;
+		std::cout << MAGENTA << "Range Constructor » " << RESET;
 		result( vec, orig );
 		printVector( vec, orig );
 	}
@@ -119,7 +119,7 @@ void	constructorsTest( void ) {
 		ft::vector<T>	vec( tmp );
 		std::vector<T>	orig( tmp_orig );
 
-		std::cout << MAGENTA << "- Copy Constructor » " << RESET;
+		std::cout << MAGENTA << "Copy Constructor » " << RESET;
 		result( vec, orig );
 		printVector( vec, orig );
 	}
@@ -131,7 +131,7 @@ void	constructorsTest( void ) {
 		ft::vector<T>	vec = tmp;
 		std::vector<T>	orig = tmp_orig;
 
-		std::cout << MAGENTA << "- Assignation Overload » " << RESET;
+		std::cout << MAGENTA << "Assignation Overload » " << RESET;
 		result( vec, orig );
 		printVector( vec, orig );
 	}
