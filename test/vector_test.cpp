@@ -2,7 +2,7 @@
 # include <ostream>
 
 void	startTest( const std::string &testName ) {
-	std::cout << std::endl;
+	// std::cout << std::endl;
 	std::cout << "------------------------------------------" << std::endl;
 	std::cout << BOLDWHITE;
 	std::cout << "\n» " << testName << std::endl << std::endl;
@@ -137,8 +137,36 @@ void	constructorsTest( void ) {
 	}
 }
 
+template < class T >
+void	resize_test( void ) {
+
+	startTest( "Resize Test" );
+
+	{
+		ft::vector<T>	vec( 10 );
+		std::vector<T>	orig( 10 );
+
+		std::cout << MAGENTA << "Resize [10 -> 100] » " << RESET;
+		vec.resize( 100, 45 );
+		orig.resize( 100, 45 );
+		result( vec, orig );
+		printVector( vec, orig );
+	}
+
+	{
+		ft::vector<T>	vec( 10 );
+		std::vector<T>	orig( 10 );
+
+		std::cout << MAGENTA << "Resize [10 -> 2] » " << RESET;
+		vec.resize( 2, 45 );
+		orig.resize( 2, 45 );
+		result( vec, orig );
+		printVector( vec, orig );
+	}
+}
+
 void	vectorTest( void ) {
 	constructorsTest<float>();
 	assignTest<int, 70>();
-
+	resize_test<int>();
 }

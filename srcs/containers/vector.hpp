@@ -167,11 +167,11 @@ namespace ft {
 							 const value_type &value,
 							 const allocator_type &alloc )
 	:
-		_alloc( alloc ),
-		_size( count )
+		_alloc( alloc )
 	{
 		if ( count < 0 )
 			throw std::out_of_range( "ft::vector count must be >= 0" );
+		_size = count;
 		_capacity = count;
 		_start = _alloc.allocate( _capacity );
 
