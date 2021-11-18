@@ -62,6 +62,16 @@ namespace ft {
 			void	push( const value_type &value ) { c.push_back( value ); }
 			void	pop( void )						{ c.pop_back(); }
 
+
+			// MARK: - Friend Functions
+
+			friend bool	operator == ( const ft::stack<T, Container> &lhs, const ft::stack<T, Container> &rhs )	{ return lhs.c == rhs.c; }
+			friend bool	operator != ( const ft::stack<T, Container> &lhs, const ft::stack<T, Container> &rhs )	{ return lhs.c != rhs.c; }
+			friend bool	operator < ( const ft::stack<T, Container> &lhs, const ft::stack<T, Container> &rhs )	{ return lhs.c < rhs.c; }
+			friend bool	operator <= ( const ft::stack<T, Container> &lhs, const ft::stack<T, Container> &rhs )	{ return lhs.c <= rhs.c; }
+			friend bool	operator > ( const ft::stack<T, Container> &lhs, const ft::stack<T, Container> &rhs )	{ return lhs.c > rhs.c; }
+			friend bool	operator >= ( const ft::stack<T, Container> &lhs, const ft::stack<T, Container> &rhs )	{ return lhs.c >= rhs.c; }
+
 	};
 
 
@@ -96,7 +106,7 @@ namespace ft {
 	bool	operator >= ( const ft::stack<T, Container> &lhs, const ft::stack<T, Container> &rhs ) {
 		return lhs.c >= rhs.c;
 	}
-	
+
 
 }
 

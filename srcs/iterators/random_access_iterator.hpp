@@ -31,7 +31,7 @@ namespace ft {
 
 			//MARK: - Class Constructors
 
-			random_access_iterator( void )  : ptr( 0 )	{}
+			random_access_iterator( void )  : ptr( NULL )	{}
 			random_access_iterator( pointer ptr ) : ptr( ptr )	{}
 
 
