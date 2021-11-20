@@ -14,7 +14,7 @@ namespace ft {
 			else if (*first1 < *first2)
 				return true;
 		}
-		return first2 != last2;
+		return (first1 == last1) && (first2 != last2);
 	}
 
 	template < class InputIterator1, class InputIterator2, class Compare >
@@ -26,7 +26,7 @@ namespace ft {
 			else if (cmp(*first1, *first2))
 				return true;
 		}
-		return first2 != last2;
+		return (first1 == last1) && (first2 != last2);
 	}
 
 }

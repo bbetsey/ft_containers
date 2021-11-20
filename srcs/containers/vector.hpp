@@ -689,8 +689,8 @@ namespace ft {
 		if (lhs.size() != rhs.size())
 			return false;
 
-		typename ft::vector<T>::iterator it_lhs = lhs.begin();
-		typename ft::vector<T>::iterator it_rhs = rhs.begin();
+		typename ft::vector<const T>::iterator it_lhs = lhs.begin();
+		typename ft::vector<const T>::iterator it_rhs = rhs.begin();
 
 		for (; it_lhs != lhs.end(); ++it_lhs, ++it_rhs)
 			if (*it_lhs != *it_rhs)
@@ -710,6 +710,8 @@ namespace ft {
 
 	template < class T, class Alloc >
 	bool	operator > ( const ft::vector<T, Alloc> &lhs, const ft::vector<T, Alloc> &rhs ) {
+		if ( lhs.size() > rhs.size() ) return true;
+		if ( lhs.size() < rhs.size() ) return false;
 		return !ft::lexicographical_compare( lhs.begin(), lhs.end(), rhs.begin(), rhs.end() );
 	}
 
@@ -717,8 +719,9 @@ namespace ft {
 
 	template < class T, class Alloc >
 	bool	operator >= ( const ft::vector<T, Alloc> &lhs, const ft::vector<T, Alloc> &rhs ) {
-		if (rhs == lhs)
-			return true;
+		if ( lhs.size() > rhs.size() ) return true;
+		if ( lhs.size() < rhs.size() ) return false;
+		if (rhs == lhs) return true;
 		return !ft::lexicographical_compare( lhs.begin(), lhs.end(), rhs.begin(), rhs.end() );
 	}
 
@@ -726,6 +729,8 @@ namespace ft {
 
 	template < class T, class Alloc >
 	bool	operator < ( const ft::vector<T, Alloc> &lhs, const ft::vector<T, Alloc> &rhs ) {
+		if ( lhs.size() > rhs.size() ) return false;
+		if ( lhs.size() < rhs.size() ) return true;
 		return ft::lexicographical_compare( lhs.begin(), lhs.end(), rhs.begin(), rhs.end() );
 	}
 
@@ -733,8 +738,9 @@ namespace ft {
 
 	template < class T, class Alloc >
 	bool	operator <= ( const ft::vector<T, Alloc> &lhs, const ft::vector<T, Alloc> &rhs ) {
-		if (rhs == lhs)
-			return true;
+		if ( lhs.size() > rhs.size() ) return false;
+		if ( lhs.size() < rhs.size() ) return true;
+		if (rhs == lhs) return true;
 		return ft::lexicographical_compare( lhs.begin(), lhs.end(), rhs.begin(), rhs.end() );
 	}
 
