@@ -23,12 +23,12 @@ namespace ft {
 
 			// MARK: - Class Constructor
 
-			explicit stack( const Container &cont = Container() ) : c( cont )	{}
+			explicit stack( const Container &cont = Container() )	{ c = cont; }
 
 
 			// MARK: - Class Copy Constructor
 
-			stack( const stack &src ) : c( src.c ) {}
+			stack( const stack &src )	{ c = src.c; }
 
 
 			// MARK: - Class Distructor
@@ -73,39 +73,6 @@ namespace ft {
 			friend bool	operator >= ( const ft::stack<T, Container> &lhs, const ft::stack<T, Container> &rhs )	{ return lhs.c >= rhs.c; }
 
 	};
-
-
-	// MARK: - Non Member Functions
-
-	// template < class T, class Container >
-	// bool	operator == ( const ft::stack<T, Container> &lhs, const ft::stack<T, Container> &rhs ) {
-	// 	return lhs.c == rhs.c;
-	// }
-
-	// template < class T, class Container >
-	// bool	operator != ( const ft::stack<T, Container> &lhs, const ft::stack<T, Container> &rhs ) {
-	// 	return lhs.c != rhs.c;
-	// }
-
-	// template < class T, class Container >
-	// bool	operator < ( const ft::stack<T, Container> &lhs, const ft::stack<T, Container> &rhs ) {
-	// 	return lhs.c < rhs.c;
-	// }
-
-	// template < class T, class Container >
-	// bool	operator <= ( const ft::stack<T, Container> &lhs, const ft::stack<T, Container> &rhs ) {
-	// 	return lhs.c <= rhs.c;
-	// }
-
-	// template < class T, class Container >
-	// bool	operator > ( const ft::stack<T, Container> &lhs, const ft::stack<T, Container> &rhs ) {
-	// 	return lhs.c > rhs.c;
-	// }
-
-	// template < class T, class Container >
-	// bool	operator >= ( const ft::stack<T, Container> &lhs, const ft::stack<T, Container> &rhs ) {
-	// 	return lhs.c >= rhs.c;
-	// }
 
 
 }

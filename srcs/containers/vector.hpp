@@ -98,6 +98,9 @@ namespace ft {
 			reference			back( void );
 			const_reference		back( void ) const;
 
+			pointer				data( void );
+			const_pointer		data( void ) const;
+
 
 			// MARK: - Iterators ✓
 
@@ -176,7 +179,7 @@ namespace ft {
 		_start = _alloc.allocate( _capacity );
 
 		for (iterator it = begin(); it != end(); ++it)
-			*it = value;
+			_alloc.construct( it.getPointer(), value );
 	}
 
 	// » range constructor
@@ -202,7 +205,7 @@ namespace ft {
 	template < class T, class Alloc >
 	ft::vector<T, Alloc>::vector( const vector &src )
 	:
-		_alloc( src._alloc ),
+		_alloc( src.get_allocator() ),
 		_start( NULL ),
 		_size( src._size ),
 		_capacity( src._capacity )
@@ -220,9 +223,11 @@ namespace ft {
 	&ft::vector<T, Alloc>::operator = ( const vector &src ) {
 		if (this != &src) {
 			clear();
+			_alloc.deallocate( _start, _capacity );
 			_alloc = src.get_allocator();
 			_size = src._size;
 			_capacity = src._capacity;
+			_start = _alloc.allocate( _capacity );
 			assign( src.begin(), src.end() );
 		}
 		return *this;
@@ -508,6 +513,20 @@ namespace ft {
 		return _start + ret;
 	}
 
+	// » data
+
+	template < class T, class Alloc >
+	typename ft::vector<T, Alloc>::pointer
+	ft::vector<T, Alloc>::data( void ) 	{ 
+		return _start;
+	}
+
+	template < class T, class Alloc >
+	typename ft::vector<T, Alloc>::const_pointer
+	ft::vector<T, Alloc>::data( void ) const {
+		return _start;
+	}
+
 	// » insert ( some identical values )
 
 	template < class T, class Alloc >
@@ -710,27 +729,21 @@ namespace ft {
 
 	template < class T, class Alloc >
 	bool	operator > ( const ft::vector<T, Alloc> &lhs, const ft::vector<T, Alloc> &rhs ) {
-		if ( lhs.size() > rhs.size() ) return true;
-		if ( lhs.size() < rhs.size() ) return false;
-		return !ft::lexicographical_compare( lhs.begin(), lhs.end(), rhs.begin(), rhs.end() );
+		return ( rhs < lhs );
 	}
 
 	// » operator >=
 
 	template < class T, class Alloc >
 	bool	operator >= ( const ft::vector<T, Alloc> &lhs, const ft::vector<T, Alloc> &rhs ) {
-		if ( lhs.size() > rhs.size() ) return true;
-		if ( lhs.size() < rhs.size() ) return false;
 		if (rhs == lhs) return true;
-		return !ft::lexicographical_compare( lhs.begin(), lhs.end(), rhs.begin(), rhs.end() );
+		return !(lhs < rhs);
 	}
 
 	// » operator <
 
 	template < class T, class Alloc >
 	bool	operator < ( const ft::vector<T, Alloc> &lhs, const ft::vector<T, Alloc> &rhs ) {
-		if ( lhs.size() > rhs.size() ) return false;
-		if ( lhs.size() < rhs.size() ) return true;
 		return ft::lexicographical_compare( lhs.begin(), lhs.end(), rhs.begin(), rhs.end() );
 	}
 
@@ -738,10 +751,8 @@ namespace ft {
 
 	template < class T, class Alloc >
 	bool	operator <= ( const ft::vector<T, Alloc> &lhs, const ft::vector<T, Alloc> &rhs ) {
-		if ( lhs.size() > rhs.size() ) return false;
-		if ( lhs.size() < rhs.size() ) return true;
 		if (rhs == lhs) return true;
-		return ft::lexicographical_compare( lhs.begin(), lhs.end(), rhs.begin(), rhs.end() );
+		return !(lhs > rhs);
 	}
 
 	// » swap
