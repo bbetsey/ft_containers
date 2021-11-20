@@ -165,8 +165,27 @@ void	resize_test( void ) {
 	}
 }
 
+template < class T >
+void	insert_test( void ) {
+
+	startTest( "Insert Test" );
+
+	{
+		ft::vector<T>	vec( 10 );
+		std::vector<T>	orig( 10 );
+
+		std::cout << MAGENTA << "Insert [+10; 4; 3] » " << RESET;
+		vec.insert( vec.begin() + 10, 4, 3 );
+		orig.insert( orig.begin() + 10, 4, 3 );
+
+		result( vec, orig );
+		printVector( vec, orig );
+	}
+}
+
 void	vectorTest( void ) {
 	constructorsTest<float>();
 	assignTest<int, 70>();
 	resize_test<int>();
+	insert_test<int>();
 }
