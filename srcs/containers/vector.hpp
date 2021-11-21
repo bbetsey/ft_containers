@@ -532,39 +532,28 @@ namespace ft {
 	template < class InputIterator >
 	void	ft::vector<T, Alloc>::insert( iterator pos, InputIterator first, InputIterator last,
 											typename ft::enable_if<!ft::is_integral<InputIterator>::value>::type * ) {
-		difference_type	range = 0;
+		size_type	range = 0;
 		for ( InputIterator tmp = first; tmp != last; ++tmp )
 			++range;
 
-		size_type		insert_size = 0;
-		size_type		capacity_tmp = _capacity;
-		size_type		i = 0;
-		pointer			tmp;
+		size_type start = end() - pos;
+		size_type end_size = _size + range;
 
-		if ( _size + range >= _capacity )
-			_capacity += range;
-		tmp = _alloc.allocate( _capacity );
-
-		for (iterator it = begin(); it != end(); ++it, ++i ) {
-			if ( it == pos ) {
-				for (; first != last; ++first, ++i )
-					_alloc.construct( tmp + i, *first );
-				insert_size += range;
+		if ( range >= _capacity ) {
+			reserve( _capacity + range );
+			_size = end_size;
+		} else {
+			while ( _size != end_size ) {
+				if ( _size == _capacity )
+					reserve( _capacity * 2 );
+				++_size;
 			}
-			_alloc.construct( tmp + i, *it );
 		}
 
-		if ( pos == end() ) {
-			for (; first != last; ++first, ++i )
-				_alloc.construct( tmp + i, *first );
-			insert_size += range;
-		}
-
-		for ( iterator it = begin(); it != end(); ++it )
-			_alloc.destroy( it.getPointer() );
-		_alloc.deallocate( _start, capacity_tmp );
-		_size += insert_size;
-		_start = tmp;
+		for ( size_type i = _size - 1; i > _size - 1 - start; --i )
+			_start[i] = _start[i - range];
+		for ( size_type i = _size - 1 - start; range > 0; --range, --i )
+			_start[i] = *(--last);
 	}
 
 	// » erase ( one element )

@@ -174,9 +174,37 @@ void	insert_test( void ) {
 		ft::vector<T>	vec( 10 );
 		std::vector<T>	orig( 10 );
 
+		std::cout << MAGENTA << "Insert [+5; 3] » " << RESET;
+		vec.insert( vec.begin() + 5, 3 );
+		orig.insert( orig.begin() + 5, 3 );
+
+		result( vec, orig );
+		printVector( vec, orig );
+	}
+
+	{
+		ft::vector<T>	vec( 10 );
+		std::vector<T>	orig( 10 );
+
 		std::cout << MAGENTA << "Insert [+10; 4; 3] » " << RESET;
 		vec.insert( vec.begin() + 10, 4, 3 );
 		orig.insert( orig.begin() + 10, 4, 3 );
+
+		result( vec, orig );
+		printVector( vec, orig );
+	}
+
+	{
+		ft::vector<T>	vec( 10 );
+		std::vector<T>	orig( 10 );
+		std::vector<int>	tmp;
+
+		for( int i = 0; i < 5; ++i )
+			tmp.push_back( i * i );
+
+		std::cout << MAGENTA << "Insert [+10; tmp.begin(); tmp.end()] » " << RESET;
+		vec.insert( vec.begin() + 10, tmp.begin(), tmp.end() );
+		orig.insert( orig.begin() + 10, tmp.begin(), tmp.end() );
 
 		result( vec, orig );
 		printVector( vec, orig );
