@@ -84,7 +84,7 @@ namespace ft {
 							typename ft::enable_if<!ft::is_integral<InputIterator>::value>::type * = 0 );
 
 
-			// MARK: - Class Element Access
+			// MARK: - Class Element Access ✓
 
 			reference			at( size_type pos );
 			const_reference		at( size_type pos ) const;
@@ -126,7 +126,7 @@ namespace ft {
 			void		reserve( size_type new_cap );
 			
 
-			// MARK: - Modifiers
+			// MARK: - Modifiers ✓
 
 			void		clear( void );
 
