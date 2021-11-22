@@ -174,9 +174,20 @@ void	insert_test( void ) {
 		ft::vector<T>	vec( 10 );
 		std::vector<T>	orig( 10 );
 
-		std::cout << MAGENTA << "Insert [+5; 3] » " << RESET;
-		vec.insert( vec.begin() + 5, 3 );
-		orig.insert( orig.begin() + 5, 3 );
+		std::cout << MAGENTA << "Insert [0; 3] » " << RESET;
+		typename ft::vector<T>::iterator vecIt = vec.insert( vec.begin() + 0, 3 );
+		typename std::vector<T>::iterator origIt = orig.insert( orig.begin() + 0, 3 );
+		std::cout << "ft: " << *vecIt << "\tstd: " << *origIt << std::endl;
+
+		std::cout << MAGENTA << "Insert [5; 3] » " << RESET;
+		vecIt = vec.insert( vec.begin() + 5, 3 );
+		origIt = orig.insert( orig.begin() + 5, 3 );
+		std::cout << "ft: " << *vecIt << "\tstd: " << *origIt << std::endl;
+
+		std::cout << MAGENTA << "Insert [end(); 3] » " << RESET;
+		vecIt = vec.insert( vec.end(), 3 );
+		origIt = orig.insert( orig.end(), 3 );
+		std::cout << "ft: " << *vecIt << "\tstd: " << *origIt << std::endl;
 
 		result( vec, orig );
 		printVector( vec, orig );
@@ -211,9 +222,105 @@ void	insert_test( void ) {
 	}
 }
 
+
+class B {
+public:
+	char *l;
+	int i;
+	B():l(nullptr), i(1) {};
+	B(const int &ex) {
+		this->i = ex;
+		this->l = new char('a');
+	};
+	virtual ~B() {
+		delete this->l;
+		this->l = nullptr;
+	};
+};
+
+class A : public B {
+public:
+	A():B(){};
+	A(const B* ex){
+		this->l = new char(*(ex->l));
+		this->i = ex->i;
+		if (ex->i == -1) throw "n";
+	}
+	~A() {
+		delete this->l;
+		this->l = nullptr;
+	};
+};
+
+template <typename T>
+std::vector<int> insert_test_1( void ) {
+	ft::vector<int>	vector;
+    std::vector<int> v;
+    vector.assign(26000000, 1);
+    v.push_back(*(vector.insert(vector.end() - 8000000, 44)));
+    v.push_back(vector.size());
+    v.push_back(vector.capacity());
+    std::unique_ptr<B> k2(new B(3));
+    std::unique_ptr<B> k3(new B(4));
+    std::unique_ptr<B> k4(new B(-1));
+    ft::vector<A> vv;
+    ft::vector<B*> v1;
+
+    v1.push_back(&(*k2));
+    v1.push_back(&(*k3));
+    v1.push_back(&(*k4));
+    try { 
+		vv.insert(vv.begin(), v1.begin(), v1.end());
+	}
+    catch (...) {
+    	v.push_back(vv.size());
+    	v.push_back(vv.capacity());
+    }
+    return v;
+}
+
+template <typename T>
+std::vector<int> insert_test_2( void ) {
+	std::vector<int>	vector;
+    std::vector<int> v;
+    vector.assign(26000000, 1);
+    v.push_back(*(vector.insert(vector.end() - 8000000, 44)));
+    v.push_back(vector.size());
+    v.push_back(vector.capacity());
+    std::unique_ptr<B> k2(new B(3));
+    std::unique_ptr<B> k3(new B(4));
+    std::unique_ptr<B> k4(new B(-1));
+    std::vector<A> vv;
+    std::vector<B*> v1;
+
+    v1.push_back(&(*k2));
+    v1.push_back(&(*k3));
+    v1.push_back(&(*k4));
+    try { 
+		vv.insert(vv.begin(), v1.begin(), v1.end());
+	}
+    catch (...) {
+    	v.push_back(vv.size());
+    	v.push_back(vv.capacity());
+    }
+    return v;
+}
+
 void	vectorTest( void ) {
 	constructorsTest<float>();
 	assignTest<int, 70>();
 	resize_test<int>();
 	insert_test<int>();
+
+	std::cout << MAGENTA << "Insert [A(B), B] » " << RESET;
+	std::vector<int> res1 = insert_test_1<int>();
+	std::vector<int> res2 = insert_test_2<int>();
+	if ( res1 == res2 )
+		std::cout << BOLDGREEN "[OK]" RESET << std::endl;
+	else {
+		std::cout << BOLDRED "[NO]" RESET << std::endl;
+		std::cout << "0: " << res1[0] << " " << res2[0] << std::endl;
+		std::cout << "1: " << res1[1] << " " << res2[1] << std::endl;
+		std::cout << "2: " << res1[2] << " " << res2[2] << std::endl;
+	}
 }
