@@ -635,10 +635,7 @@ namespace ft {
 
 	template < class T, class Alloc >
 	void	ft::vector<T, Alloc>::swap( vector &src ) {
-		std::swap( _size, src._size );
-		std::swap( _capacity, src._capacity );
-		std::swap( _start, src._start );
-		std::swap( _alloc, src._alloc );
+		std::swap( *this, src );
 	}
 
 
