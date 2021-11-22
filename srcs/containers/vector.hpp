@@ -527,6 +527,7 @@ namespace ft {
 		size_type end_size = _size + count;
 
 		if ( end_size >= _capacity ) {
+			if ( !_capacity ) ++_capacity;
 			reserve( _capacity * 2 );
 			_size = end_size;
 		} else {
