@@ -145,11 +145,28 @@ namespace ft {
 			void		resize( size_type count, value_type value = value_type() );
 			void		swap( vector &src );
 
+
+		private:
+
+			template<class InputIt>
+			typename ft::enable_if<!ft::is_integral<InputIt>::value, bool>::type
+			validate_iterator_values(InputIt first, InputIt last, size_t range) {
+				pointer reserved_buffer;
+				bool	result = true;
+
+				reserved_buffer = _alloc.allocate( range );
+				for ( size_t i = 0; first != last; ++first, ++i ) {
+					try { reserved_buffer[i] = *first; }
+					catch (...) { result = false; break; }
+				}
+				_alloc.deallocate( reserved_buffer, range );
+				return result;
+			}
 	};
 
 
 
-	
+
 	// MARK: - Class Constructors
 
 	// » default constructor
@@ -191,10 +208,10 @@ namespace ft {
 					typename ft::enable_if<!ft::is_integral<InputIterator>::value>::type * )
 	:
 		_alloc( alloc ),
+		_start( NULL ),
 		_size( 0 ),
 		_capacity( 0 )
 	{
-		_start = _alloc.allocate( _capacity );
 		assign( first, last );
 	}
 
@@ -211,7 +228,8 @@ namespace ft {
 		_capacity( src._capacity )
 	{
 		_start = _alloc.allocate( _capacity );
-		assign( src.begin(), src.end() );
+		for ( size_type i = 0; i < _size; ++i )
+			_alloc.construct( _start + i , src[i] );
 	}
 
 
@@ -239,8 +257,7 @@ namespace ft {
 
 	template < class T, class Alloc >
 	ft::vector<T, Alloc>::~vector( void ) {
-		for (iterator it = begin(); it != end(); ++it)
-			_alloc.destroy( it.getPointer() );
+		clear();
 		_alloc.deallocate( _start, _capacity );
 	}
 
@@ -264,13 +281,13 @@ namespace ft {
 	void	ft::vector<T, Alloc>::assign( size_type count, const value_type &value ) {
 		clear();
 		_size = count;
-		if ( count > _capacity ) {
-			_alloc.deallocate( _start, _capacity );
+		if ( _size > _capacity ) {
+			if ( _start ) _alloc.deallocate( _start, _capacity );
 			_capacity = _size;
 			_start = _alloc.allocate( _capacity );
 		}
-		for (iterator it = begin(); it != end(); ++it)
-			_alloc.construct( it.getPointer() , value );
+		for ( size_type i = 0; i < _size; ++i )
+			_alloc.construct( _start + i , value );
 	}
 
 	// » assign ( some difference values )
@@ -283,12 +300,12 @@ namespace ft {
 		for ( InputIterator it = first; it != last; ++it )
 			++_size;
 		if ( _size > _capacity ) {
-			_alloc.deallocate( _start, _capacity );
+			if ( _start ) _alloc.deallocate( _start, _capacity );
 			_capacity = _size;
 			_start = _alloc.allocate( _capacity );
 		}
-		for (iterator it = begin(); first != last; ++it, ++first)
-			_alloc.construct( it.getPointer(), *first );
+		for ( size_type i = 0; i < _size; ++i, ++first )
+			_alloc.construct( _start + i , *first );
 	}
 
 
@@ -471,11 +488,10 @@ namespace ft {
 		if (new_cap < _capacity)
 			return;
 		pointer	new_start = _alloc.allocate( new_cap );
-		for(size_type i = 0; i < _size; ++i) {
+		for ( size_type i = 0; i < _size; ++i )
 			_alloc.construct( new_start + i, _start[i] );
-			_alloc.destroy( _start + i );
-		}
-		_alloc.deallocate( _start, _capacity );
+		if ( _start )
+			_alloc.deallocate( _start, _capacity );
 		_start = new_start;
 		_capacity = new_cap;
 	}
@@ -488,8 +504,8 @@ namespace ft {
 
 	template < class T, class Alloc >
 	void	ft::vector<T, Alloc>::clear( void ) {
-		for (iterator it = begin(); it != end(); ++it)
-			_alloc.destroy( it.getPointer() );
+		for ( size_type i = 0; i < _size; ++i )
+			_alloc.destroy( _start + i );
 		_size = 0;
 	}
 
@@ -510,8 +526,8 @@ namespace ft {
 		size_type start = end() - pos;
 		size_type end_size = _size + count;
 
-		if ( count >= _capacity ) {
-			reserve( _capacity + count );
+		if ( end_size >= _capacity ) {
+			reserve( _capacity * 2 );
 			_size = end_size;
 		} else {
 			while ( _size != end_size ) {
@@ -535,6 +551,8 @@ namespace ft {
 		size_type	range = 0;
 		for ( InputIterator tmp = first; tmp != last; ++tmp )
 			++range;
+		if (!validate_iterator_values(first, last, range))
+			throw std::exception();
 
 		size_type start = end() - pos;
 		size_type end_size = _size + range;
@@ -549,7 +567,6 @@ namespace ft {
 				++_size;
 			}
 		}
-
 		for ( size_type i = _size - 1; i > _size - 1 - start; --i )
 			_start[i] = _start[i - range];
 		for ( size_type i = _size - 1 - start; range > 0; --range, --i )
@@ -561,9 +578,9 @@ namespace ft {
 	template < class T, class Alloc >
 	typename ft::vector<T, Alloc>::iterator
 	ft::vector<T, Alloc>::erase( iterator pos ) {
-		for (size_type i = pos - begin() ; i < _size; ++i )
+		for (size_type i = pos - begin() ; i < _size - 1; ++i )
 			_start[i] = _start[i + 1];
-		--_size;
+		pop_back();
 		return pos;
 	}
 
@@ -579,7 +596,7 @@ namespace ft {
 		_size -= range;
 		for ( size_type i = start; i < _size; ++i )
 			_start[i] = _start[i + range];
-		return first;
+		return _start + start;
 	}
 
 	// » push back
@@ -588,7 +605,7 @@ namespace ft {
 	void	ft::vector<T, Alloc>::push_back( const value_type &value ) {
 		if ( _capacity == _size )
 			(!_capacity) ? reserve( 1 ) : reserve( _capacity * 2 );
-		_alloc.construct( end().operator->(), value );
+		_alloc.construct( end().getPointer(), value );
 		++_size;
 	}
 
@@ -596,7 +613,8 @@ namespace ft {
 
 	template < class T, class Alloc >
 	void	ft::vector<T, Alloc>::pop_back( void ) {
-		erase( end() - 1 );
+		_alloc.destroy( _start + _size );
+		--_size;
 	}
 
 	// » resize
