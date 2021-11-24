@@ -10,12 +10,13 @@ namespace ft {
 		BlACK
 	};
 
-	template < class T >
+	template < class T, class Compare >
 	struct node {
 
 		// MARK: - Member Types
 
-		typedef T	value_type;
+		typedef T			value_type;
+		typedef Compare		compare_type;
 
 
 		// MARK: - Member Values
@@ -76,9 +77,11 @@ namespace ft {
 		// MARK: - Member Bool Overloads
 
 		bool	operator == ( const node &src ) {
-			if ( value == src.value )
-				return true;
-			return false;
+			return value == src.value;
+		}
+
+		bool	operator < ( const node &src ) {
+			return compare_type{}( value, src.value );
 		}
 
 	};
