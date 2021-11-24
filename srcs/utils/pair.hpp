@@ -8,7 +8,6 @@ namespace ft {
 	template < class T1, class T2 >
 	struct pair {
 		
-		
 		// MARK: - Member Types
 
 		typedef T1	first_type;
