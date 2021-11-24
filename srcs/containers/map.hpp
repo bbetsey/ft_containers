@@ -6,7 +6,19 @@
 
 namespace ft {
 
-	template < class Key, class T, class Compare = std::less<Key>, class Allocator = std::allocator< ft::pair<const Key, T> > >
+	template < class Key, class Value >
+	struct mapPairCmp {
+
+		typedef bool					result_type;
+		typedef pair<const Key, Value>	argument_type;
+
+		bool	operator () ( const argument_type &lhs, const argument_type &rhs ) {
+			return lhs.first < rhs.second;
+		}
+		
+	};
+
+	template < class Key, class T, class Compare = ft::mapPairCmp<Key, T>, class Allocator = std::allocator< ft::pair<const Key, T> > >
 	class map {
 
 		public:
