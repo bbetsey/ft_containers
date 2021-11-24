@@ -5,6 +5,11 @@
 
 namespace ft {
 
+	enum nodeColor {
+		RED,
+		BlACK
+	};
+
 	template < class T >
 	struct node {
 
@@ -16,6 +21,7 @@ namespace ft {
 		// MARK: - Member Values
 
 		value_type	value;
+		nodeColor	color;
 		node		*parent;
 		node		*left;
 		node		*right;
@@ -28,6 +34,7 @@ namespace ft {
 		node( node *parent = nullptr, node *left = nullptr, node *right = nullptr )
 		:
 			value(),
+			color( RED ),
 			parent( parent ),
 			left( left ),
 			right( right )
@@ -36,6 +43,7 @@ namespace ft {
 		node( const value_type &val, node *parent = nullptr, node *left = nullptr, node *right = nullptr )
 		:
 			value( val ),
+			color( RED ),
 			parent( parent ),
 			left( left ),
 			right( right )
@@ -44,7 +52,7 @@ namespace ft {
 
 		// MARK: - Struct Copy Constructor
 
-		node( const node &src ) : value( src.value ), parent( src.parent ), left( src.left ), right( src.right ) {}
+		node( const node &src ) : value( src.value ), color( src.color ), parent( src.parent ), left( src.left ), right( src.right ) {}
 
 
 		// MARK: - Struct Distructor
@@ -72,7 +80,7 @@ namespace ft {
 				return true;
 			return false;
 		}
-		
+
 	};
 
 }
