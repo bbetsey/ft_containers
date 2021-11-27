@@ -30,7 +30,7 @@ namespace ft {
 
 		// MARK: - Struct Constructors
 
-		node( void ) : value(), parent( nullptr ), left( nullptr ), right( nullptr ) {}
+		node( void ) : value(), color( RED ), parent( nullptr ), left( nullptr ), right( nullptr ) {}
 
 		node( node *parent = nullptr, node *left = nullptr, node *right = nullptr )
 		:
@@ -77,7 +77,7 @@ namespace ft {
 		// MARK: - Member Bool Overloads
 
 		bool	operator == ( const node &src ) {
-			return value == src.value;
+			return !compare_type{}( value, src.value ) && !compare_type{}( src.value, value );
 		}
 
 		bool	operator < ( const node &src ) {
