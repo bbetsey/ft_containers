@@ -90,6 +90,12 @@ namespace ft {
 		return !( lhs < rhs );
 	}
 
+	template < class T1, class T2 >
+	std::ostream	&operator << ( std::ostream &os, const ft::pair<T1, T2> &src ) {
+		os << "[" << src.first << ":" << src.second << "]";
+		return os;
+	}
+
 }
 
 

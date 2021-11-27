@@ -10,12 +10,12 @@ namespace ft {
 		BlACK
 	};
 
-	template < class T, class Compare >
+	template < class Value, class Compare >
 	struct node {
 
 		// MARK: - Member Types
 
-		typedef T			value_type;
+		typedef Value		value_type;
 		typedef Compare		compare_type;
 
 
@@ -73,24 +73,11 @@ namespace ft {
 			return *this;
 		}
 
-
-		// MARK: - Member Bool Overloads
-
-		bool	operator == ( const node &src ) {
-			return !compare_type{}( value, src.value ) && !compare_type{}( src.value, value );
-		}
-
-		bool	operator < ( const node &src ) {
-			return compare_type{}( value, src.value );
-		}
-
 		
 		// MARK: - Member Functions
 
 		void	colorToggle( void ) {
-			color = ( color == RED )
-				? BlACK
-				: RED;
+			color = ( color == RED ) ? BlACK : RED;
 		}
 
 		bool	isOnTheLeftSide( void ) {
@@ -126,6 +113,28 @@ namespace ft {
 		}
 
 	};
+
+	template < class T, class Compare >
+	std::ostream	&operator << ( std::ostream &os, const ft::node<T, Compare> &src ) {
+		if ( !src )
+			os << "[none]";
+		else { 
+			if ( src.color == ft::colors.RED )
+				os << "\033[0;31m";
+			os << src.value << "\033[0m";
+		}
+		return os;
+	}
+
+	template < class T, class Compare >
+	bool	operator < ( const ft::node<T, Compare> &lhs, const ft::node<T, Compare> &rhs ) {
+		return Compare{}( lhs.value, rhs.value );
+	}
+
+	template < class T, class Compare >
+	bool	operator == ( const ft::node<T, Compare> &lhs, const ft::node<T, Compare> &rhs ) {
+		return !Compare{}( lhs.value, rhs.value ) && !Compare{}( rhs.value, lhs.value );
+	}
 
 }
 
