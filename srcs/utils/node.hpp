@@ -5,7 +5,7 @@
 
 namespace ft {
 
-	enum nodeColor {
+	enum colors {
 		RED,
 		BlACK
 	};
@@ -22,7 +22,7 @@ namespace ft {
 		// MARK: - Member Values
 
 		value_type	value;
-		nodeColor	color;
+		colors		color;
 		node		*parent;
 		node		*left;
 		node		*right;
@@ -82,6 +82,47 @@ namespace ft {
 
 		bool	operator < ( const node &src ) {
 			return compare_type{}( value, src.value );
+		}
+
+		
+		// MARK: - Member Functions
+
+		void	colorToggle( void ) {
+			color = ( color == RED )
+				? BlACK
+				: RED;
+		}
+
+		bool	isOnTheLeftSide( void ) {
+			if ( parent )
+				return this == parent->left;
+			return false;
+		}
+
+		bool	hasRedChild( void ) {
+			return ( right && right->color == RED ) || ( left && left->color == RED );
+		}
+
+		node	*getFather( void ) {
+			return parent;
+		}
+
+		node	*getGrandfather( void ) {
+			if ( parent )
+				return getFather( parent );
+			return NULL;
+		}
+
+		node	*getBrother( void ) {
+			if ( parent )
+				return isOnTheLeftSide() ? parent->right : parent->left;
+			return NULL;
+		}
+
+		node	*getUncle( void ) {
+			if ( getGrandfather() )
+				return getBrother( parent );
+			return NULL;
 		}
 
 	};
