@@ -24,7 +24,7 @@ namespace ft {
 
 		private:
 
-			iterator_type	node;
+			iterator_type	*node;
 
 			void	next( void ) {
 				if ( !node->right->isLeaf ) {
@@ -60,7 +60,7 @@ namespace ft {
 
 			// MARK: - Class Constructor
 
-			node_iterator( iterator_type node = nullptr ) : node( node ) {}
+			node_iterator( iterator_type *node = nullptr ) : node( node ) {}
 
 
 			// MARK: - Class Copy Constructor
@@ -95,8 +95,8 @@ namespace ft {
 			node_iterator	&operator -- ( void )	{ prev(); return *this; }
 			node_iterator	operator -- ( int )		{ node_iterator tmp( *this ); prev(); return tmp; }
 
-			reference		operator * ( void )		{ return node->value; }
-			pointer			operator -> ( void )	{ return std::addressof( node->value ); }
+			reference		operator * ( void )		{ return *(node->value); }
+			pointer			operator -> ( void )	{ return std::addressof( *(node->value) ); }
 
 			bool			operator == ( const node_iterator &src ) const	{ return node == src.node; }
 			bool			operator != ( const node_iterator &src ) const	{ return node != src.node; }
