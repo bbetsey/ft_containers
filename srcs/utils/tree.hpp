@@ -7,23 +7,24 @@
 
 namespace ft {
 
-	template < class Node, class Alloc = std::allocator<Node> >
+	template < class Value, class Allocator = std::allocator<ft::node<Value> > >
 	class rbTree {
 
 		public:
 
 			// MARK: - Member Types
 
-			typedef Node			node_type;
-			typedef Alloc			allocator_type;
-			typedef size_t			size_type;
+			typedef Value					value_type;
+			typedef ft::node<value_type>	node_type;
+			typedef size_t					size_type;
+			typedef Allocator				allocator_type;
 
 
 		private:
 
-			allocator_type		_alloc;
 			node_type			_root;
 			size_type			_size;
+			allocator_type		_alloc;
 
 
 			// MARK: - Class Methods (private)
@@ -134,7 +135,6 @@ namespace ft {
 			// MARK: - Getters
 
 			node_type		*getRoot( void )		{ return _root; }
-			allocator_type	getAllocator( void )	{ return _alloc; }
 
 
 			// MARK: - Class Constructors

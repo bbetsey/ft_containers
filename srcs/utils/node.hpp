@@ -10,19 +10,19 @@ namespace ft {
 		BlACK
 	};
 
-	template < class Value, class Compare >
+	template < class Value >
 	struct node {
 
 		// MARK: - Member Types
 
 		typedef Value		value_type;
-		typedef Compare		compare_type;
 
 
 		// MARK: - Member Values
 
 		value_type	value;
 		colors		color;
+		bool		isLeaf;
 		node		*parent;
 		node		*left;
 		node		*right;
@@ -30,7 +30,7 @@ namespace ft {
 
 		// MARK: - Struct Constructors
 
-		node( void ) : value(), color( RED ), parent( nullptr ), left( nullptr ), right( nullptr ) {}
+		node( void ) : value(), color( RED ), isLeaf( true ), parent( nullptr ), left( nullptr ), right( nullptr ) {}
 
 		node( node *parent = nullptr, node *left = nullptr, node *right = nullptr )
 		:
@@ -45,6 +45,7 @@ namespace ft {
 		:
 			value( val ),
 			color( RED ),
+			isLeaf( false ), 
 			parent( parent ),
 			left( left ),
 			right( right )
@@ -53,7 +54,7 @@ namespace ft {
 
 		// MARK: - Struct Copy Constructor
 
-		node( const node &src ) : value( src.value ), color( src.color ), parent( src.parent ), left( src.left ), right( src.right ) {}
+		node( const node &src ) : value( src.value ), color( src.color ), isLeaf( src.isLeaf ), parent( src.parent ), left( src.left ), right( src.right ) {}
 
 
 		// MARK: - Struct Distructor
@@ -66,6 +67,8 @@ namespace ft {
 		node	&operator = ( const node &src ) {
 			if ( this != src ) {
 				value = src.value;
+				color = src.color;
+				isLeaf = src.isLeaf;
 				parent = src.parent;
 				left = src.left;
 				right = src.right;
@@ -115,7 +118,7 @@ namespace ft {
 	};
 
 	template < class T, class Compare >
-	std::ostream	&operator << ( std::ostream &os, const ft::node<T, Compare> &src ) {
+	std::ostream	&operator << ( std::ostream &os, const ft::node<T> &src ) {
 		if ( !src )
 			os << "[none]";
 		else { 
@@ -124,16 +127,6 @@ namespace ft {
 			os << src.value << "\033[0m";
 		}
 		return os;
-	}
-
-	template < class T, class Compare >
-	bool	operator < ( const ft::node<T, Compare> &lhs, const ft::node<T, Compare> &rhs ) {
-		return Compare{}( lhs.value, rhs.value );
-	}
-
-	template < class T, class Compare >
-	bool	operator == ( const ft::node<T, Compare> &lhs, const ft::node<T, Compare> &rhs ) {
-		return !Compare{}( lhs.value, rhs.value ) && !Compare{}( rhs.value, lhs.value );
 	}
 
 }
