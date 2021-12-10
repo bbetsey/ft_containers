@@ -141,7 +141,7 @@ namespace ft {
 			
 			void	checkTheTree( node_type *node )	{ insertCase1( node ); }
 
-			node_type	getBegin( void ) {
+			node_type	begin( void ) {
 				node_type *tmp = _root;
 
 				while ( !tmp->left->isLeaf )
@@ -149,12 +149,20 @@ namespace ft {
 				return tmp;
 			}
 
-			node_type	getLast( void ) {
+			node_type	last( void ) {
 				node_type *tmp = _root;
 
 				while ( !tmp->right->isLeaf )
 					tmp = tmp->right;
 				return tmp;
+			}
+
+			node_type	end( void ) {
+				node_type *tmp = _root;
+
+				while ( !tmp->right->isLeaf )
+					tmp = tmp->right;
+				return tmp->right;
 			}
 		
 	};
