@@ -7,7 +7,7 @@
 
 namespace ft {
 
-	template < class Value, class Allocator = std::allocator<ft::node<Value> > >
+	template < class Value >
 	class rbTree {
 
 		public:
@@ -17,14 +17,12 @@ namespace ft {
 			typedef Value					value_type;
 			typedef ft::node<value_type>	node_type;
 			typedef size_t					size_type;
-			typedef Allocator				allocator_type;
 
 
 		private:
 
-			node_type			_root;
+			node_type			*_root;
 			size_type			_size;
-			allocator_type		_alloc;
 
 
 			// MARK: - Class Methods (private)
@@ -46,6 +44,7 @@ namespace ft {
 					pivot->left->parent = node;
 				node->parent = pivot;
 				pivot->left = node;
+				if ( node == _root ) _root = pivot;
 			}
 
 			void	rightRotate( node_type *node ) {
@@ -63,6 +62,7 @@ namespace ft {
 					pivot->right->parent = node;
 				node->parent = pivot;
 				pivot->right = node;
+				if ( node == _root ) _root = pivot;
 			}
 
 			void	insertCase1( node_type *node ) {
@@ -119,17 +119,17 @@ namespace ft {
 				}
 			}
 
-			void	freeTree( node_type *node ) {
-				if ( node ) {
-					freeTree( node->left );
-					freeTree( node->right );
-					_alloc.destroy( node );
-					_alloc.deallocate( node, 1 );
-				}
-			}
-
 
 		public:
+
+			// MARK: - Class Constructors
+
+			tree( void ) : _size( 0 ), _root( nullptr ) {}
+
+
+			// MARK: - Class Distructor
+
+			~tree( void ) {}
 
 
 			// MARK: - Getters
@@ -137,24 +137,27 @@ namespace ft {
 			node_type		*getRoot( void )		{ return _root; }
 
 
-			// MARK: - Class Constructors
+			// MARK: - Class Methods
+			
+			void	checkTheTree( node_type *node )	{ insertCase1( node ); }
 
-			tree( void ) : _alloc( allocator_type() ), _size( 0 ) {
-				node_type	node;
-				_root = _alloc.allocate( 1 );
-				*_root = node;
-				_root->color = colors.BLACK;
+			node_type	getBegin( void ) {
+				node_type *tmp = _root;
+
+				while ( !tmp->left->isLeaf )
+					tmp = tmp->left;
+				return tmp;
 			}
 
+			node_type	getLast( void ) {
+				node_type *tmp = _root;
 
-			// MARK: - Class Distructor
-
-			~tree( void ) {
-				freeTree( _root );
+				while ( !tmp->right->isLeaf )
+					tmp = tmp->right;
+				return tmp;
 			}
 		
 	};
-
 
 }
 
