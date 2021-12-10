@@ -67,7 +67,6 @@ namespace ft {
 			allocator_rebind_tree	_tree_alloc;
 			key_compare				_comp;
 			rbTree<value_type>*		_tree = nullptr;
-			size_type				_size;
 
 		
 		public:
@@ -75,16 +74,10 @@ namespace ft {
 			
 			// MARK: - Class Constructors
 
-			map( void ) {
-				_tree = _tree_alloc.allocate( sizeof(rbTree<value_type>) );
-				_tree_alloc.construct( _tree );
-				_size = 0;
-			}
+			map( void )	{ treeInit(); }
 
 			explicit map( const Compare &comp, const Allocator &alloc = Allocator() ) : _comp( comp ), _pair_alloc( alloc ) {
-				_tree = _tree_alloc.allocate( sizeof(rbTree<value_type>) );
-				_tree_alloc.construct( _tree );
-				_size = 0;
+				treeInit();
 			}
 
 			template < class InputIt >
@@ -93,8 +86,7 @@ namespace ft {
 				_pair_alloc( alloc ),
 				_comp( comp )
 			{
-				_tree = _tree_alloc.allocate( sizeof(rbTree<value_type>) );
-				_tree_alloc.construct( _tree );
+				treeInit();
 				for ( ; first != last; ++first )
 					insert( ft::make_pair( first->first, first->second ) );
 			}
@@ -180,8 +172,47 @@ namespace ft {
 				burnTheTree();
 				_tree = _tree_alloc.allocate( sizeof(rbTree<value_type) );
 				_tree_alloc.construct( _tree );
-				_size = 0;
 			}
+
+
+			ft::pair<iterator, bool>	insert( const value_type &value ) {
+				ft::pair<iterator, bool> place = findPlace( _tree->_root, value );
+				if ( !place.second ) return place;
+			}
+
+
+
+		private:
+
+			void	treeInit( void ) {
+				_tree = _tree_alloc.allocate( sizeof(_tree<value_type>) );
+				_tree_alloc.construct( _tree );
+				_tree->_root = _node_alloc.allocate( sizeof(node<value_type>) );
+				_node_alloc.construct( _tree->_root );
+			}
+
+			ft::pair<iterator, bool>	findPlace( node<value_type> *root, const value_type &value ) {
+				while ( !root->isLeaf ){
+					if ( root->value.first == value.first ) return ft::make_pair( root, false );
+					root = ( _comp( value.first, root->value.first ) )
+						? root->left
+						: root->right;
+				}
+				return ft::make_pair( root, true );
+			}
+
+			node<value_type>	*leafInit( iterator place ) {
+				node<value_type>	*leaf;
+
+				leaf = _node_alloc.allocate( sizeof(node<value_type>) );
+				_node_alloc.construct( leaf->value, value_type() )
+			}
+
+			void	fillNode( iterator place, const value_type &value ) {
+				place->value = value;
+				place->right = _node_alloc.allocate( sizeof(node<value_type) );
+			}
+			
 
 	};
 
