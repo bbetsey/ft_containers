@@ -20,6 +20,7 @@ namespace ft {
 			typedef Key																			key_type;
 			typedef T																			mapped_type;
 			typedef typename ft::pair<const Key, T>												value_type;
+			typedef node<value_type>															node_type;
 			typedef std::size_t																	size_type;
 			typedef std::ptrdiff_t																difference_type;
 			typedef Compare																		key_compare;
@@ -106,8 +107,7 @@ namespace ft {
 					if ( _tree )
 						burnTheTree();
 					_size = src._size;
-					_tree = _tree_alloc.allocate( sizeof(rbTree<value_type>) );
-					_tree_alloc.construct( _tree, *src._tree );
+					treeInit();
 					copyTree( src._tree->_root );
 					return *this;
 				}
@@ -170,8 +170,7 @@ namespace ft {
 
 			void	clear( void ) {
 				burnTheTree();
-				_tree = _tree_alloc.allocate( sizeof(rbTree<value_type) );
-				_tree_alloc.construct( _tree );
+				treeInit();
 			}
 
 
@@ -187,11 +186,30 @@ namespace ft {
 			void	treeInit( void ) {
 				_tree = _tree_alloc.allocate( sizeof(_tree<value_type>) );
 				_tree_alloc.construct( _tree );
-				_tree->_root = _node_alloc.allocate( sizeof(node<value_type>) );
-				_node_alloc.construct( _tree->_root );
+				_tree->_root = nodeInit();
 			}
 
-			ft::pair<iterator, bool>	findPlace( node<value_type> *root, const value_type &value ) {
+			node_type	*nodeInit( void ) {
+				node_type	*node;
+
+				node = _node_alloc.allocate( sizeof(node_type) );
+				_node_alloc.construct( node );
+				node->isLeaf = false;
+				node->right = leafInit( node );
+				node->left = leafInit( node );
+				return node;
+			}
+
+			node_type	*leafInit( node_type *parent ) {
+				node_type	*node;
+
+				node = _node_alloc.allocate( sizeof(node_type) );
+				_node_alloc.construct( node );
+				node->parent = parent
+				return node;
+			}
+
+			ft::pair<iterator, bool>	findPlace( node_type *root, const value_type &value ) {
 				while ( !root->isLeaf ){
 					if ( root->value.first == value.first ) return ft::make_pair( root, false );
 					root = ( _comp( value.first, root->value.first ) )
@@ -201,16 +219,16 @@ namespace ft {
 				return ft::make_pair( root, true );
 			}
 
-			node<value_type>	*leafInit( iterator place ) {
-				node<value_type>	*leaf;
+			node_type	*leafInit( iterator place ) {
+				node_type	*leaf;
 
-				leaf = _node_alloc.allocate( sizeof(node<value_type>) );
+				leaf = _node_alloc.allocate( sizeof(node_type) );
 				_node_alloc.construct( leaf->value, value_type() )
 			}
 
 			void	fillNode( iterator place, const value_type &value ) {
 				place->value = value;
-				place->right = _node_alloc.allocate( sizeof(node<value_type) );
+				place->right = _node_alloc.allocate( sizeof(node_type) );
 			}
 			
 

@@ -30,7 +30,7 @@ namespace ft {
 
 		// MARK: - Struct Constructors
 
-		node( void ) : value( new value_type() ), color( BlACK ), isLeaf( true ), parent( nullptr ), left( nullptr ), right( nullptr ) {}
+		node( void ) : value( nullptr ), color( BlACK ), isLeaf( true ), parent( nullptr ), left( nullptr ), right( nullptr ) {}
 
 		node( node *parent = nullptr, node *left = nullptr, node *right = nullptr, bool isLeaf = true )
 		:
