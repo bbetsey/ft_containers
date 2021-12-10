@@ -20,7 +20,7 @@ namespace ft {
 
 		// MARK: - Member Values
 
-		value_type	value;
+		value_type	*value;
 		colors		color;
 		bool		isLeaf;
 		node		*parent;
@@ -30,12 +30,13 @@ namespace ft {
 
 		// MARK: - Struct Constructors
 
-		node( void ) : value(), color( RED ), isLeaf( true ), parent( nullptr ), left( nullptr ), right( nullptr ) {}
+		node( void ) : value( new value_type() ), color( BlACK ), isLeaf( true ), parent( nullptr ), left( nullptr ), right( nullptr ) {}
 
-		node( node *parent = nullptr, node *left = nullptr, node *right = nullptr )
+		node( node *parent = nullptr, node *left = nullptr, node *right = nullptr, bool isLeaf = true )
 		:
-			value(),
-			color( RED ),
+			value( new value_type() ),
+			color( BlACK ),
+			isLeaf( isLeaf ),
 			parent( parent ),
 			left( left ),
 			right( right )
@@ -43,8 +44,8 @@ namespace ft {
 
 		node( const value_type &val, node *parent = nullptr, node *left = nullptr, node *right = nullptr )
 		:
-			value( val ),
-			color( RED ),
+			value( new value_type(val) ),
+			color( BlACK ),
 			isLeaf( false ), 
 			parent( parent ),
 			left( left ),
@@ -59,7 +60,7 @@ namespace ft {
 
 		// MARK: - Struct Distructor
 
-		~node( void ) {}
+		~node( void ) { delete value; }
 
 
 		// MARK: - Struct Assignation Overload
