@@ -175,14 +175,57 @@ namespace ft {
 
 
 			ft::pair<iterator, bool>	insert( const value_type &value ) {
-				ft::pair<iterator, bool> place = findPlace( _tree->_root, value );
-				if ( !place.second ) return place;
-				node_type	*node = place->first;
-				node->value = _pair_alloc.allocate( sizeof(value_type) );
-				_pair_alloc.construct( node->value, value );
-				node->right = leafInit( node );
-				node->left = leafInit( node );
-				node->isLeaf = false;
+				insertByHint( _tree->_root, value );
+			}
+
+			iterator	insert( iterator hint, const value_type &value ) {
+				if ( hint == end() ) return insert( value ).first;
+				
+				if ( hint->first > value.first ) {
+					iterator it = hint;
+					--it;
+					while ( !it->isLeaf && it->first >= value.first )
+						--hint; --it;
+				} else if ( hint->first < value.first ) {
+					iterator it = hint;
+					++it;
+					while ( !it->isLeaf && it->first <= value.first )
+						++hint; ++it;
+				}
+				return insertByHint( hint.base(), value ).first;	
+			}
+
+			template < class InputIt >
+			void	insert( InputIt first, InputIt last ) {
+				for ( ; first != last; ++first )
+					insert( ft::make_pair( first->first, first->second ) );
+			}
+
+			void	erase( iterator pos ) {
+				if ( !pos.base() || pos->isLeaf() ) return;
+
+				if ( !pos->hasOneOrMoreLeaf() ) {
+					pos = pos->right;
+					while ( !pos->left->isLeaf )
+						pos = pos->left;
+				}
+
+				_tree->deleteOneChild( pos.base() );
+				_tree->properties.size -= 1;
+				delete pos.base();
+			}
+
+			void	erase( iterator first, iterator last ) {
+				for ( ; first != last; ++first )
+					erase( first );
+			}
+
+			size_type	erase( const key_value &key ) {
+				iterator it = find( key );
+				if ( it.base() )
+					erase( it ); return 1;
+				else
+					return 0;
 			}
 
 
@@ -222,7 +265,7 @@ namespace ft {
 				return node;
 			}
 
-			ft::pair<iterator, bool>	findPlace( node_type *root, const value_type &value ) {
+			ft::pair<iterator, bool>	findPlace( node_type *hint, const value_type &value ) {
 				while ( !root->isLeaf ){
 					if ( root->value.first == value.first ) return ft::make_pair( root, false );
 					root = ( _comp( value.first, root->value.first ) )
@@ -232,11 +275,20 @@ namespace ft {
 				return ft::make_pair( iterator(root), true );
 			}
 
-			node_type	*leafInit( iterator place ) {
-				node_type	*leaf;
+			ft::pair<iterator, bool>	insertByHint( node_type *hint, const value_type &value ) {
+				ft::pair<iterator, bool> place = findPlace( hint, value );
+				if ( !place.second ) return place;
+				
+				node_type	*node = place->first;
+				node->value = _pair_alloc.allocate( sizeof(value_type) );
+				_pair_alloc.construct( node->value, value );
+				node->right = leafInit( node );
+				node->left = leafInit( node );
+				node->isLeaf = false;
+				node->color = RED;
 
-				leaf = _node_alloc.allocate( sizeof(node_type) );
-				_node_alloc.construct( leaf->value, value_type() )
+				_tree->properties.size += 1;
+				_tree->insertCase1( node );
 			}
 
 			void	fillNode( iterator place, const value_type &value ) {
