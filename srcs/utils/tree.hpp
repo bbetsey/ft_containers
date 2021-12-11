@@ -6,6 +6,7 @@
 # include "node.hpp"
 
 namespace ft {
+	
 
 	template < class Value >
 	class rbTree {
@@ -19,10 +20,23 @@ namespace ft {
 			typedef size_t					size_type;
 
 
+			// MARK: - Member Struct
+
+			struct treeProperties {
+				node_type		*smallest;
+				node_type		*biggest;
+				size_type		size;
+
+				treeProperties( void ) : smallest( nullptr ), biggest( nullptr ), size( 0 ) {}
+				~treeProperties( void ) {}
+			};
+
+
 		private:
 
 			node_type			*_root;
-			size_type			_size;
+			treeProperties		properties;			
+			
 
 
 			// MARK: - Class Methods (private)
@@ -124,7 +138,7 @@ namespace ft {
 
 			// MARK: - Class Constructors
 
-			tree( void ) : _size( 0 ), _root( nullptr ) {}
+			tree( void ) : _root( nullptr ) {}
 
 
 			// MARK: - Class Distructor

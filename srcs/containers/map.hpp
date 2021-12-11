@@ -177,6 +177,12 @@ namespace ft {
 			ft::pair<iterator, bool>	insert( const value_type &value ) {
 				ft::pair<iterator, bool> place = findPlace( _tree->_root, value );
 				if ( !place.second ) return place;
+				node_type	*node = place->first;
+				node->value = _pair_alloc.allocate( sizeof(value_type) );
+				_pair_alloc.construct( node->value, value );
+				node->right = leafInit( node );
+				node->left = leafInit( node );
+				node->isLeaf = false;
 			}
 
 
@@ -186,14 +192,21 @@ namespace ft {
 			void	treeInit( void ) {
 				_tree = _tree_alloc.allocate( sizeof(_tree<value_type>) );
 				_tree_alloc.construct( _tree );
-				_tree->_root = nodeInit();
+				_tree->_root = leafInit( nullptr );
+				_tree->properties.biggest = _root;
+				_tree->properties.smallest = _root;
+				_tree->properties.size = 0;
 			}
 
-			node_type	*nodeInit( void ) {
+			node_type	*nodeInit( const value_type &value ) {
 				node_type	*node;
 
 				node = _node_alloc.allocate( sizeof(node_type) );
-				_node_alloc.construct( node );
+				_node_alloc.construct( node, value );
+
+				_tree->properties.size += 1;
+				_tree->properties.biggest = ( !_tree->root->isLeaf &&  )
+
 				node->isLeaf = false;
 				node->right = leafInit( node );
 				node->left = leafInit( node );
@@ -216,7 +229,7 @@ namespace ft {
 						? root->left
 						: root->right;
 				}
-				return ft::make_pair( root, true );
+				return ft::make_pair( iterator(root), true );
 			}
 
 			node_type	*leafInit( iterator place ) {
