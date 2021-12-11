@@ -35,6 +35,8 @@ namespace ft {
 			bool	equal( const node_type &lhs, const node_type &rhs )	{ return lhs == rhs; }
 
 			void	checkBounds( node_type *node ) {
+				if ( !_biggest )
+					_biggest = node; _smallest = node; return;
 				if ( _comp( *_biggest->value, *node->value ) )
 					_biggest = node; return;
 				if ( _comp( *node->value, *_smallest->value ) )

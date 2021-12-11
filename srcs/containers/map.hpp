@@ -292,8 +292,6 @@ namespace ft {
 				_tree = _tree_alloc.allocate( sizeof(tree_type) );
 				_tree_alloc.construct( _tree );
 				_tree->setRoot( leafInit( nullptr ) );
-				_tree->setBiggest( _tree->root() );
-				_tree->setSmallest( _tree->root() );
 			}
 
 			node_type	*leafInit( node_type *parent ) {
@@ -326,7 +324,7 @@ namespace ft {
 				node->right = leafInit( node );
 				node->left = leafInit( node );
 				node->isLeaf = false;
-				node->color = RED;
+				node->color = ( node->parent ) ? RED : BLACK;
 
 				_tree->insertCheck( node );
 				return place;
