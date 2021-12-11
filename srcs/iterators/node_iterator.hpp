@@ -24,7 +24,7 @@ namespace ft {
 
 		private:
 
-			iterator_type	*node;
+			iterator_type	node;
 
 			void	next( void ) {
 				if ( !node->right->isLeaf ) {
@@ -35,7 +35,7 @@ namespace ft {
 					iterator_type	current = node;
 					while ( node->parent && !node->isOnTheLeftSide() )
 						node = node->parent;
-					node = ( node->parent ) ? parent : current->right;
+					node = ( node->parent ) ? node->parent : current->right;
 				}
 			}
 
@@ -51,7 +51,7 @@ namespace ft {
 					node = node->parent;
 					while ( node->parent && node->isOnTheLeftSide() )
 						node = node->parent;
-					node = ( node->parent ) ? parent : current->left;
+					node = ( node->parent ) ? node->parent : current->left;
 				}
 			}
 
@@ -60,7 +60,7 @@ namespace ft {
 
 			// MARK: - Class Constructor
 
-			node_iterator( iterator_type *node = nullptr ) : node( node ) {}
+			node_iterator( iterator_type node = nullptr ) : node( node ) {}
 
 
 			// MARK: - Class Copy Constructor
@@ -68,13 +68,13 @@ namespace ft {
 			node_iterator( const node_iterator &src ) : node( src.node ) {}
 
 			template < class N1, class V1 >
-			node_iterator( const node_iterator<N1, V1> &src, ft::enable_if<std::is_convertible<N1, V1>::value>::type& = 0 ) : node( src.base() ) {}
+			node_iterator( const node_iterator<N1, V1> &src, typename ft::enable_if<std::is_convertible<N1, V1>::value>::type& = 0 ) : node( src.base() ) {}
 
 
 			// MARK: - Class Assignation Overload
 
 			node_iterator	&operator = ( const node_iterator &src ) {
-				if ( this != src )
+				if ( this != &src )
 					node = src.node;
 				return *this;
 			}
@@ -82,7 +82,7 @@ namespace ft {
 
 			// MARK: - Class Distructor
 
-			node_iterator( void ) {}
+			~node_iterator( void ) {}
 
 
 			// MARK - Class Methods

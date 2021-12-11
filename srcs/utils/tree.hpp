@@ -8,7 +8,7 @@
 namespace ft {
 	
 
-	template < class Value >
+	template < class Value, class Compare = std::less<Value> >
 	class rbTree {
 
 		public:
@@ -18,30 +18,28 @@ namespace ft {
 			typedef Value					value_type;
 			typedef ft::node<value_type>	node_type;
 			typedef size_t					size_type;
-
-
-			// MARK: - Member Struct
-
-			struct treeProperties {
-				node_type		*smallest;
-				node_type		*biggest;
-				size_type		size;
-
-				treeProperties( void ) : smallest( nullptr ), biggest( nullptr ), size( 0 ) {}
-				~treeProperties( void ) {}
-			};
+			typedef Compare					comp_type;
 
 
 		private:
 
-			node_type			*_root;
-			treeProperties		properties;			
-			
+			node_type		*_root;
+			node_type		*_smallest;
+			node_type		*_biggest;
+			size_type		_size;
+			comp_type		_comp;
 
 
 			// MARK: - Class Methods (private)
 
 			bool	equal( const node_type &lhs, const node_type &rhs )	{ return lhs == rhs; }
+
+			void	checkBounds( node_type *node ) {
+				if ( _comp( *_biggest->value, *node->value ) )
+					_biggest = node; return;
+				if ( _comp( *node->value, *_smallest->value ) )
+					_smallest = node;
+			}
 
 			void	leftRotate( node_type *node ) {
 				node_type	*pivot = node->right;
@@ -83,14 +81,16 @@ namespace ft {
 			// -------------------- INSERT MODE --------------------
 
 			void	insertCase1( node_type *node ) {
+				checkBounds( node );
 				if ( node->parent == NULL )
-					node->color = colors.BLACK;
+					node->color = BLACK;
 				else
 					insertCase2( node );
+				_size += 1;
 			}
 
 			void	insertCase2( node_type *node ) {
-				if ( node->parent->color == colors.BLACK )
+				if ( node->parent->color == BLACK )
 					return;
 				else
 					insertCase3( node );
@@ -100,11 +100,11 @@ namespace ft {
 				node_type	*u = node->getUncle();
 				node_type	*g;
 
-				if ( u  && u->color == colors.RED ) {
-					node->parent->color = colors.BLACK;
+				if ( u  && u->color == RED ) {
+					node->parent->color = BLACK;
 					u->color = BLACK;
 					g = node->getGrandfather();
-					g->color = colors.RED;
+					g->color = RED;
 					insertCase1( g );
 				} else {
 					insertCase4( node );
@@ -127,15 +127,15 @@ namespace ft {
 			void	insertCase5( node_type *node ) {
 				node_type	*g = node->getGrandfather();
 
-				node->parent->color = colors.BLACK;
-				g->color = colors.RED;
+				node->parent->color = BLACK;
+				g->color = RED;
 				if ( node->isOnTheLeftSide() && node->parent == g->left ) {
 					rightRotate( g );
 				} else {
 					leftRotate( g );
 				}
 			}
-			
+
 
 			// -------------------- DELETE MODE --------------------
 
@@ -153,10 +153,11 @@ namespace ft {
 				replaceNode( node, child );
 				if ( node->color == BLACK ) {
 					if ( child->color == RED )
-						child->color = BlACK;
+						child->color = BLACK;
 					else
 						deleteCase1( child );
 				}
+				_size -= 1;
 			}
 
 			void	deleteCase1( node_type *node ) {
@@ -181,7 +182,7 @@ namespace ft {
 			void	deleteCase3( node_type *node ) {
 				node_type *brother = node->getBrother();
 
-				if ( node->parent->color == BlACK && brother->color == BLACK && brother->right->color == BLACK && brother->left->color == BLACK ) {
+				if ( node->parent->color == BLACK && brother->color == BLACK && brother->right->color == BLACK && brother->left->color == BLACK ) {
 					brother->color = RED;
 					deleteCase1( node->parent );
 				} else
@@ -201,8 +202,8 @@ namespace ft {
 			void	deleteCase5( node_type *node ) {
 				node_type *brother = node->getBrother();
 
-				if ( brother->color = BLACK ) {
-					if ( node->isOnTheLeftSide() && brother->right->color == BlACK && brother->left->color == RED ) {
+				if ( brother->color == BLACK ) {
+					if ( node->isOnTheLeftSide() && brother->right->color == BLACK && brother->left->color == RED ) {
 						brother->color = RED;
 						brother->left->color = BLACK;
 						rightRotate( brother );
@@ -222,10 +223,10 @@ namespace ft {
 				node->parent->color = BLACK;
 				
 				if ( node->isOnTheLeftSide() ) {
-					brother->right->color = BlACK;
+					brother->right->color = BLACK;
 					leftRotate( node->parent );
 				} else {
-					brother->left->color = BlACK;
+					brother->left->color = BLACK;
 					rightRotate( node->parent );
 				}
 			}
@@ -236,45 +237,47 @@ namespace ft {
 
 			// MARK: - Class Constructors
 
-			tree( void ) : _root( nullptr ) {}
+			rbTree( void ) : _root( nullptr ), _smallest( nullptr ), _biggest( nullptr ), _size( 0 ), _comp( comp_type() ) {}
 
 
 			// MARK: - Class Distructor
 
-			~tree( void ) {}
+			~rbTree( void ) {}
 
 
 			// MARK: - Getters
 
-			node_type		*getRoot( void )		{ return _root; }
+			node_type		*root( void )		{ return _root; }
+			node_type		*biggest( void )	{ return _biggest; }
+			node_type		*smallest( void )	{ return _smallest; }
+			size_type		size( void )		{ return _size; }
 
+
+
+			// MARK: - Setters
+
+			void	setRoot( node_type *root )		{ _root = root; }
+			void	setBiggest( node_type *node )	{ _biggest = node; }
+			void	setSmallest( node_type *node )	{ _smallest = node; }
+			void	setSize( size_type new_size )	{ _size = new_size; }
+			void	sizeUp( void )					{ _size += 1; }
+			void	sizeDown( void )				{ _size -= 1; }
 
 			// MARK: - Class Methods
 			
-			void	checkTheTree( node_type *node )	{ insertCase1( node ); }
+			void	insertCheck( node_type *node )	{ insertCase1( node ); }
+			void	deleteCheck( node_type *node )	{ deleteOneChild( node ); }
 
-			node_type	begin( void ) {
-				node_type *tmp = _root;
-
-				while ( !tmp->left->isLeaf )
-					tmp = tmp->left;
-				return tmp;
+			node_type	*begin( void ) {
+				return _smallest;
 			}
 
-			node_type	last( void ) {
-				node_type *tmp = _root;
-
-				while ( !tmp->right->isLeaf )
-					tmp = tmp->right;
-				return tmp;
+			node_type	*last( void ) {
+				return _biggest;
 			}
 
-			node_type	end( void ) {
-				node_type *tmp = _root;
-
-				while ( !tmp->right->isLeaf )
-					tmp = tmp->right;
-				return tmp->right;
+			node_type	*end( void ) {
+				return _biggest->right;
 			}
 		
 	};

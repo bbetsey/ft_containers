@@ -20,7 +20,7 @@ namespace ft {
 			typedef Key																			key_type;
 			typedef T																			mapped_type;
 			typedef typename ft::pair<const Key, T>												value_type;
-			typedef node<value_type>															node_type;
+			typedef ft::node<value_type>														node_type;
 			typedef std::size_t																	size_type;
 			typedef std::ptrdiff_t																difference_type;
 			typedef Compare																		key_compare;
@@ -29,8 +29,8 @@ namespace ft {
 			typedef const value_type&															const_reference;
 			typedef typename Allocator::pointer													pointer;
 			typedef typename Allocator::const_pointer											const_pointer;
-			typedef ft::node_iterator<ft::node<value_type>*, value_type>						iterator;
-			typedef ft::node_iterator<const ft::node<value_type>*, value_type>					const_iterator;
+			typedef ft::node_iterator<node_type*, value_type>									iterator;
+			typedef ft::node_iterator<const node_type*, value_type>								const_iterator;
 			typedef ft::reverse_iterator<iterator>												reverse_iterator;
 			typedef ft::reverse_iterator<const_iterator>										const_reverse_iterator;
 			typedef typename allocator_type::template rebind<ft::node<value_type> >::other		allocator_rebind_node;
@@ -41,7 +41,7 @@ namespace ft {
 
 			class value_compare : public std::binary_function<value_type, value_type, bool> {
 
-				friend class ft::map;
+				friend class map;
 
 				protected:
 
@@ -60,6 +60,8 @@ namespace ft {
 
 			};
 
+			typedef rbTree<value_type, value_compare>											tree_type;
+
 		
 		private:
 
@@ -67,7 +69,7 @@ namespace ft {
 			allocator_rebind_node	_node_alloc;
 			allocator_rebind_tree	_tree_alloc;
 			key_compare				_comp;
-			rbTree<value_type>*		_tree = nullptr;
+			rbTree<value_type>*		_tree;
 
 		
 		public:
@@ -95,7 +97,7 @@ namespace ft {
 
 			// MARK: - Class Copy Constructor
 
-			map( const map &src ) { *this = src; }
+			map( const map &src ) { _tree = nullptr; *this = src; }
 
 
 			// MARK: - Class Assignation Overload
@@ -105,19 +107,18 @@ namespace ft {
 					_comp = src._comp;
 					_pair_alloc = src._pair_alloc;
 					if ( _tree )
-						burnTheTree();
-					_size = src._size;
+						burnTheTree( _tree->root() );
 					treeInit();
-					copyTree( src._tree->_root );
-					return *this;
+					copyTree( src._tree->root() );
 				}
+				return *this;
 			}
 
 
 			// MARK: - Class Distructor
 
 			~map( void ) {
-				burnTheTree();
+				burnTheTree( _tree->root() );
 			}
 
 
@@ -161,21 +162,21 @@ namespace ft {
 
 			// MARK: - Capacity
 
-			bool		empty( void ) const	{ return _size == 0; }
-			size_type	size( void ) const	{ return _size; }
+			bool		empty( void ) const	{ return _tree->size() == 0; }
+			size_type	size( void ) const	{ return _tree->size(); }
 			size_type	max_size( void ) const { return (size_type)std::numeric_limits<difference_type>::max(); }
 
 
 			// MARK: - Modifiers
 
 			void	clear( void ) {
-				burnTheTree();
+				burnTheTree( _tree->root() );
 				treeInit();
 			}
 
 
 			ft::pair<iterator, bool>	insert( const value_type &value ) {
-				insertByHint( _tree->_root, value );
+				return insertByHint( _tree->root(), value );
 			}
 
 			iterator	insert( iterator hint, const value_type &value ) {
@@ -184,12 +185,12 @@ namespace ft {
 				if ( hint->first > value.first ) {
 					iterator it = hint;
 					--it;
-					while ( !it->isLeaf && it->first >= value.first )
+					while ( !it.base()->isLeaf && it->first >= value.first )
 						--hint; --it;
 				} else if ( hint->first < value.first ) {
 					iterator it = hint;
 					++it;
-					while ( !it->isLeaf && it->first <= value.first )
+					while ( !it.base()->isLeaf && it->first <= value.first )
 						++hint; ++it;
 				}
 				return insertByHint( hint.base(), value ).first;	
@@ -202,17 +203,19 @@ namespace ft {
 			}
 
 			void	erase( iterator pos ) {
-				if ( !pos.base() || pos->isLeaf() ) return;
+				if ( !pos.base() || pos.base()->isLeaf ) return;
 
-				if ( !pos->hasOneOrMoreLeaf() ) {
-					pos = pos->right;
-					while ( !pos->left->isLeaf )
-						pos = pos->left;
+				if ( !pos.base()->hasOneOrMoreLeaf() ) {
+					pos = pos.base()->right;
+					while ( !pos.base()->left->isLeaf )
+						pos = iterator( pos.base()->left );
 				}
 
-				_tree->deleteOneChild( pos.base() );
-				_tree->properties.size -= 1;
-				delete pos.base();
+				_tree->deleteCheck( pos.base() );
+				if ( _tree->biggest() == pos.base() ) _tree->setBiggest( _tree->last() );
+				else if ( _tree->smallest() == pos.base() ) _tree->setSmallest( _tree->begin() );
+				_node_alloc.destroy( pos.base() );
+				_node_alloc.deallocate( pos.base(), sizeof(node_type) );
 			}
 
 			void	erase( iterator first, iterator last ) {
@@ -220,40 +223,77 @@ namespace ft {
 					erase( first );
 			}
 
-			size_type	erase( const key_value &key ) {
+			size_type	erase( const key_type &key ) {
 				iterator it = find( key );
-				if ( it.base() )
-					erase( it ); return 1;
-				else
-					return 0;
+				if ( it.base() ) {
+					erase( it );
+					return 1;
+				}
+				return 0;
+			}
+
+			void	swap( map &src ) {
+				std::swap( _tree, src._tree );
+			}
+
+
+			// MARK: - Lookup
+
+			size_type	count( const key_type &key ) const {
+				return find( key ) == end() ? 0 : 1;
+			}
+
+			iterator	find( const key_type &key ) {
+				node_type *tmp = _tree->root();
+
+				while ( !tmp->isLeaf ) {
+					if ( key == tmp->value->first )
+						return iterator( tmp );
+					else
+						tmp = _comp( key, tmp->value->first ) ? tmp->left : tmp->right;
+				}
+				return end();
+			}
+
+			const_iterator	find( const key_type &key ) const {
+				node_type *tmp = _tree->root();
+
+				while ( !tmp->isLeaf ) {
+					if ( key == tmp->value->first )
+						return const_iterator( tmp );
+					else
+						tmp = _comp( key, tmp->value->first ) ? tmp->left : tmp->right;
+				}
+				return end();
 			}
 
 
 
 		private:
 
-			void	treeInit( void ) {
-				_tree = _tree_alloc.allocate( sizeof(_tree<value_type>) );
-				_tree_alloc.construct( _tree );
-				_tree->_root = leafInit( nullptr );
-				_tree->properties.biggest = _root;
-				_tree->properties.smallest = _root;
-				_tree->properties.size = 0;
+			void	burnTheTree( node_type *node ) {
+				if ( !node || node->isLeaf ) return;
+				if ( !node->left->isLeaf ) burnTheTree( node->left );
+				if ( !node->right->isLeaf ) burnTheTree( node->right );
+				_node_alloc.destroy( node );
+				_node_alloc.deallocate( node, sizeof(node_type) );				
 			}
 
-			node_type	*nodeInit( const value_type &value ) {
-				node_type	*node;
+			void	copyTree( node_type *node ) {
+				if ( !node->left->isLeaf )
+					copyTree( node->left );
+				if ( !node->isLeaf )
+					insert( *node->value );
+				if ( !node->right->isLeaf )
+					copyTree( node->right );
+			}
 
-				node = _node_alloc.allocate( sizeof(node_type) );
-				_node_alloc.construct( node, value );
-
-				_tree->properties.size += 1;
-				_tree->properties.biggest = ( !_tree->root->isLeaf &&  )
-
-				node->isLeaf = false;
-				node->right = leafInit( node );
-				node->left = leafInit( node );
-				return node;
+			void	treeInit( void ) {
+				_tree = _tree_alloc.allocate( sizeof(tree_type) );
+				_tree_alloc.construct( _tree );
+				_tree->setRoot( leafInit( nullptr ) );
+				_tree->setBiggest( _tree->root() );
+				_tree->setSmallest( _tree->root() );
 			}
 
 			node_type	*leafInit( node_type *parent ) {
@@ -261,25 +301,26 @@ namespace ft {
 
 				node = _node_alloc.allocate( sizeof(node_type) );
 				_node_alloc.construct( node );
-				node->parent = parent
+				node->parent = parent;
 				return node;
 			}
 
 			ft::pair<iterator, bool>	findPlace( node_type *hint, const value_type &value ) {
-				while ( !root->isLeaf ){
-					if ( root->value.first == value.first ) return ft::make_pair( root, false );
-					root = ( _comp( value.first, root->value.first ) )
-						? root->left
-						: root->right;
+				node_type *node = _tree->root();
+				while ( !node->isLeaf ){
+					if ( node->value->first == value.first ) return ft::make_pair( iterator(node), false );
+					node = ( _comp( value.first, node->value->first ) )
+						? node->left
+						: node->right;
 				}
-				return ft::make_pair( iterator(root), true );
+				return ft::make_pair( iterator(node), true );
 			}
 
 			ft::pair<iterator, bool>	insertByHint( node_type *hint, const value_type &value ) {
 				ft::pair<iterator, bool> place = findPlace( hint, value );
 				if ( !place.second ) return place;
 				
-				node_type	*node = place->first;
+				node_type	*node = place.first.base();
 				node->value = _pair_alloc.allocate( sizeof(value_type) );
 				_pair_alloc.construct( node->value, value );
 				node->right = leafInit( node );
@@ -287,13 +328,8 @@ namespace ft {
 				node->isLeaf = false;
 				node->color = RED;
 
-				_tree->properties.size += 1;
-				_tree->insertCase1( node );
-			}
-
-			void	fillNode( iterator place, const value_type &value ) {
-				place->value = value;
-				place->right = _node_alloc.allocate( sizeof(node_type) );
+				_tree->insertCheck( node );
+				return place;
 			}
 			
 

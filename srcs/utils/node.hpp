@@ -7,7 +7,7 @@ namespace ft {
 
 	enum colors {
 		RED,
-		BlACK
+		BLACK
 	};
 
 	template < class Value >
@@ -16,6 +16,7 @@ namespace ft {
 		// MARK: - Member Types
 
 		typedef Value		value_type;
+		typedef node<Value>	node_type;
 
 
 		// MARK: - Member Values
@@ -30,22 +31,12 @@ namespace ft {
 
 		// MARK: - Struct Constructors
 
-		node( void ) : value( nullptr ), color( BlACK ), isLeaf( true ), parent( nullptr ), left( nullptr ), right( nullptr ) {}
-
-		node( node *parent = nullptr, node *left = nullptr, node *right = nullptr, bool isLeaf = true )
-		:
-			value( new value_type() ),
-			color( BlACK ),
-			isLeaf( isLeaf ),
-			parent( parent ),
-			left( left ),
-			right( right )
-		{}
+		node( void ) : value( nullptr ), color( BLACK ), isLeaf( true ), parent( nullptr ), left( nullptr ), right( nullptr ) {}
 
 		node( const value_type &val, node *parent = nullptr, node *left = nullptr, node *right = nullptr )
 		:
 			value( new value_type(val) ),
-			color( BlACK ),
+			color( BLACK ),
 			isLeaf( false ), 
 			parent( parent ),
 			left( left ),
@@ -60,7 +51,7 @@ namespace ft {
 
 		// MARK: - Struct Distructor
 
-		~node( void ) { delete value; }
+		~node( void ) { if ( value ) delete value; }
 
 
 		// MARK: - Struct Assignation Overload
@@ -81,7 +72,7 @@ namespace ft {
 		// MARK: - Member Functions
 
 		void	colorToggle( void ) {
-			color = ( color == RED ) ? BlACK : RED;
+			color = ( color == RED ) ? BLACK : RED;
 		}
 
 		bool	isOnTheLeftSide( void ) {
@@ -90,8 +81,8 @@ namespace ft {
 			return false;
 		}
 
-		bool	hasRedChild( void ) {
-			return ( right && right->color == RED ) || ( left && left->color == RED );
+		bool	hasOneOrMoreLeaf( void ) {
+			return left->isLeaf || right->isLeaf;
 		}
 
 		node	*getFather( void ) {
@@ -99,14 +90,20 @@ namespace ft {
 		}
 
 		node	*getGrandfather( void ) {
-			if ( parent )
-				return getFather( parent );
+			if ( parent && parent->parent )
+				return parent->parent;
 			return NULL;
 		}
 
 		node	*getBrother( void ) {
 			if ( parent )
 				return isOnTheLeftSide() ? parent->right : parent->left;
+			return NULL;
+		}
+
+		node	*getBrother( node_type *node ) {
+			if ( node->parent )
+				return isOnTheLeftSide() ? node->parent->right : node->parent->left;
 			return NULL;
 		}
 
@@ -123,7 +120,7 @@ namespace ft {
 		if ( !src )
 			os << "[none]";
 		else { 
-			if ( src.color == ft::colors.RED )
+			if ( src.color == RED )
 				os << "\033[0;31m";
 			os << src.value << "\033[0m";
 		}
