@@ -35,12 +35,14 @@ namespace ft {
 			bool	equal( const node_type &lhs, const node_type &rhs )	{ return lhs == rhs; }
 
 			void	checkBounds( node_type *node ) {
+				
 				if ( !_biggest )
-					_biggest = node; _smallest = node; return;
+					_biggest = node; _smallest = node; std::cout << "first" << std::endl; return;
+				std::cout << "Comprasion: " << node->value->first << " & " << _smallest->value->first << std::endl;
 				if ( _comp( *_biggest->value, *node->value ) )
-					_biggest = node; return;
+					_biggest = node; std::cout << "second" << std::endl; return;
 				if ( _comp( *node->value, *_smallest->value ) )
-					_smallest = node;
+					_smallest = node; std::cout << "third" << std::endl; 
 			}
 
 			void	leftRotate( node_type *node ) {
@@ -83,12 +85,10 @@ namespace ft {
 			// -------------------- INSERT MODE --------------------
 
 			void	insertCase1( node_type *node ) {
-				checkBounds( node );
 				if ( node->parent == NULL )
 					node->color = BLACK;
 				else
 					insertCase2( node );
-				_size += 1;
 			}
 
 			void	insertCase2( node_type *node ) {
@@ -159,7 +159,7 @@ namespace ft {
 					else
 						deleteCase1( child );
 				}
-				_size -= 1;
+
 			}
 
 			void	deleteCase1( node_type *node ) {
@@ -270,10 +270,36 @@ namespace ft {
 			void	insertCheck( node_type *node )	{ insertCase1( node ); }
 			void	deleteCheck( node_type *node )	{ deleteOneChild( node ); }
 
-			node_type	*begin( void )	{ return _smallest; }
-			node_type	*last( void )	{ return _biggest; }
-			node_type	*end( void )	{ return _biggest->right; }
-		
+			// node_type	*begin( void )	{ return _smallest; }
+			// node_type	*last( void )	{ return _biggest; }
+			// node_type	*end( void )	{ _biggest->right->value = _smallest->value; return _biggest->right; }
+
+			node_type	*begin( void ) {
+				node_type *tmp = _root;
+
+				while ( !tmp->left->isLeaf )
+					tmp = tmp->left;
+				return tmp;
+			}
+
+			node_type	*end( void ) {
+				node_type *tmp = _root;
+
+				while ( !tmp->right->isLeaf )
+					tmp = tmp->right;
+				tmp = tmp->right;
+				tmp->value = begin()->value;
+				return tmp;
+			}
+
+			node_type	*last( void ) {
+				node_type *tmp = _root;
+
+				while ( !tmp->right->isLeaf )
+					tmp = tmp->right;
+				return tmp;
+			}
+
 	};
 
 }

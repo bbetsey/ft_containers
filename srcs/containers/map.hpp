@@ -155,7 +155,7 @@ namespace ft {
 			iterator		end( void )			{ return _tree->end(); }
 			const_iterator	end( void ) const	{ return _tree->end(); }
 
-			reverse_iterator		rbegin( void )			{ return reverse_iterator( iterator( _tree->last() ) ); } // or _tree->last()
+			reverse_iterator		rbegin( void )			{ return reverse_iterator( iterator( _tree->last() ) ); }
 			const_reverse_iterator	rbegin( void ) const	{ return const_reverse_iterator( iterator( _tree->last() ) ); }
 
 			reverse_iterator		rend( void )			{ return reverse_iterator( iterator( _tree->end() ) ); }
@@ -214,10 +214,9 @@ namespace ft {
 				}
 
 				_tree->deleteCheck( pos.base() );
-				if ( _tree->biggest() == pos.base() ) _tree->setBiggest( _tree->last() );
-				else if ( _tree->smallest() == pos.base() ) _tree->setSmallest( _tree->begin() );
 				_node_alloc.destroy( pos.base() );
 				_node_alloc.deallocate( pos.base(), sizeof(node_type) );
+				_tree->sizeDown();
 			}
 
 			void	erase( iterator first, iterator last ) {
@@ -269,6 +268,8 @@ namespace ft {
 				return end();
 			}
 
+			size_type	size( void )	{ return _tree->size(); }
+
 
 
 		private:
@@ -306,7 +307,7 @@ namespace ft {
 			}
 
 			ft::pair<iterator, bool>	findPlace( node_type *hint, const value_type &value ) {
-				node_type *node = _tree->root();
+				node_type *node = hint;
 				while ( !node->isLeaf ){
 					if ( node->value->first == value.first ) return ft::make_pair( iterator(node), false );
 					node = ( _comp( value.first, node->value->first ) )
@@ -329,6 +330,8 @@ namespace ft {
 				node->color = ( node->parent ) ? RED : BLACK;
 
 				_tree->insertCheck( node );
+				_tree->sizeUp();
+
 				return place;
 			}
 			

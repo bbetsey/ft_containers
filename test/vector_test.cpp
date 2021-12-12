@@ -1,14 +1,6 @@
 #include "test.hpp"
 # include <ostream>
 
-void	startTest( const std::string &testName ) {
-	// std::cout << std::endl;
-	std::cout << "------------------------------------------" << std::endl;
-	std::cout << BOLDWHITE;
-	std::cout << "\n» " << testName << std::endl << std::endl;
-	std::cout << RESET;
-}
-
 template < class T >
 bool	compare( ft::vector<T> &vec, std::vector<T> &orig ) {
 	typename ft::vector<T>::iterator it_vec = vec.begin();

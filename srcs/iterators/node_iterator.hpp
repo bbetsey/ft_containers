@@ -41,7 +41,7 @@ namespace ft {
 
 			void	prev( void ) {
 				if ( node->isLeaf )
-					node = node->parent;
+					node = node->parent; return;
 				if ( !node->left->isLeaf ) {
 					node = node->left;
 					while ( !node->right->isLeaf )

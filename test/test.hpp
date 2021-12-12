@@ -4,6 +4,7 @@
 # include <iostream>
 # include <vector>
 # include "../srcs/containers/vector.hpp"
+# include "../srcs/containers/map.hpp"
 
 # define RESET			"\033[0m"
 # define BLACK			"\033[30m"
@@ -24,6 +25,14 @@
 # define BOLDWHITE		"\033[1m\033[37m"
 
 void	vectorTest( void );
+
+void	startTest( const std::string &testName ) {
+	// std::cout << std::endl;
+	std::cout << "------------------------------------------" << std::endl;
+	std::cout << BOLDWHITE;
+	std::cout << "\n» " << testName << std::endl << std::endl;
+	std::cout << RESET;
+}
 
 
 #endif
