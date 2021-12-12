@@ -234,8 +234,8 @@ namespace ft {
 			}
 
 
-
 		public:
+
 
 			// MARK: - Class Constructors
 
@@ -255,7 +255,6 @@ namespace ft {
 			size_type		size( void )		{ return _size; }
 
 
-
 			// MARK: - Setters
 
 			void	setRoot( node_type *root )		{ _root = root; }
@@ -265,22 +264,15 @@ namespace ft {
 			void	sizeUp( void )					{ _size += 1; }
 			void	sizeDown( void )				{ _size -= 1; }
 
+
 			// MARK: - Class Methods
 			
 			void	insertCheck( node_type *node )	{ insertCase1( node ); }
 			void	deleteCheck( node_type *node )	{ deleteOneChild( node ); }
 
-			node_type	*begin( void ) {
-				return _smallest;
-			}
-
-			node_type	*last( void ) {
-				return _biggest;
-			}
-
-			node_type	*end( void ) {
-				return _biggest->right;
-			}
+			node_type	*begin( void )	{ return _smallest; }
+			node_type	*last( void )	{ return _biggest; }
+			node_type	*end( void )	{ return _biggest->right; }
 		
 	};
 
