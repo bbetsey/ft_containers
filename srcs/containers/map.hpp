@@ -97,7 +97,10 @@ namespace ft {
 
 			// MARK: - Class Copy Constructor
 
-			map( const map &src ) { _tree = nullptr; *this = src; }
+			map( const map &src ) : _pair_alloc( src._pair_alloc ), _comp( src._comp ) { 
+				treeInit();
+				copyTree( src._tree->root() );
+			}
 
 
 			// MARK: - Class Assignation Overload
@@ -106,8 +109,7 @@ namespace ft {
 				if ( this != &src ) {
 					_comp = src._comp;
 					_pair_alloc = src._pair_alloc;
-					if ( _tree )
-						burnTheTree( _tree->root() );
+					burnTheTree( _tree->root() );
 					treeInit();
 					copyTree( src._tree->root() );
 				}
