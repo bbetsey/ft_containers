@@ -271,6 +271,39 @@ namespace ft {
 			size_type	size( void )	{ return _tree->size(); }
 
 
+			// Проработать ситуацию когда текущего ключа нет в дереве
+
+			iterator	lower_bound( const key_type &key ) {
+				iterator	it( _tree->root() );
+
+				if ( _comp( it->first, key ) ) {
+					++it;
+					while ( _comp( it->first, key ) && it != end() )
+						++it;
+				} else if ( _comp( key, it->first ) ) {
+					--it;
+					while ( _comp( key, it->first ) && it != end() )
+						--it;
+				}
+				return it == end() ? it : --it;
+			}
+
+			iterator	upper_bound( const key_type &key ) {
+				iterator	it( _tree->root() );
+
+				if ( _comp( it->first, key ) ) {
+					++it;
+					while ( _comp( it->first, key ) && it != end() )
+						++it;
+				} else if ( _comp( key, it->first ) ) {
+					--it;
+					while ( _comp( key, it->first ) && it != end() )
+						--it;
+				}
+				return it == end() ? it : ++it;
+			}
+
+
 
 		private:
 
