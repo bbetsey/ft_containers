@@ -149,11 +149,11 @@ namespace ft {
 
 			// MARK: - Iterators
 
-			iterator		begin( void )		{ return _tree->begin(); }
-			const_iterator	begin( void ) const	{ return _tree->begin(); }
+			iterator				begin( void )			{ return _tree->begin(); }
+			const_iterator			begin( void ) const		{ return _tree->begin(); }
 
-			iterator		end( void )			{ return _tree->end(); }
-			const_iterator	end( void ) const	{ return _tree->end(); }
+			iterator				end( void )				{ return _tree->end(); }
+			const_iterator			end( void ) const		{ return _tree->end(); }
 
 			reverse_iterator		rbegin( void )			{ return reverse_iterator( iterator( _tree->last() ) ); }
 			const_reverse_iterator	rbegin( void ) const	{ return const_reverse_iterator( iterator( _tree->last() ) ); }
@@ -164,9 +164,9 @@ namespace ft {
 
 			// MARK: - Capacity
 
-			bool		empty( void ) const	{ return _tree->size() == 0; }
-			size_type	size( void ) const	{ return _tree->size(); }
-			size_type	max_size( void ) const { return (size_type)std::numeric_limits<difference_type>::max(); }
+			bool		empty( void ) const		{ return _tree->size() == 0; }
+			size_type	size( void ) const		{ return _tree->size(); }
+			size_type	max_size( void ) const	{ return (size_type)std::numeric_limits<difference_type>::max(); }
 
 
 			// MARK: - Modifiers
@@ -175,7 +175,6 @@ namespace ft {
 				burnTheTree( _tree->root() );
 				treeInit();
 			}
-
 
 			ft::pair<iterator, bool>	insert( const value_type &value ) {
 				return insertByHint( _tree->root(), value );
@@ -206,16 +205,12 @@ namespace ft {
 
 			void	erase( iterator pos ) {
 				if ( !pos.base() || pos.base()->isLeaf ) return;
-
-				if ( !pos.base()->hasOneOrMoreLeaf() ) {
-					pos = pos.base()->right;
-					while ( !pos.base()->left->isLeaf )
-						pos = iterator( pos.base()->left );
-				}
-
-				_tree->deleteCheck( pos.base() );
-				_node_alloc.destroy( pos.base() );
-				_node_alloc.deallocate( pos.base(), sizeof(node_type) );
+				node_type *upperNode = _tree->findNodeWithOneLeafOrMore( pos.base() );
+				pos.base()->value = upperNode->value;
+				
+				_tree->deleteCheck( upperNode );
+				// _node_alloc.destroy( upperNode );
+				// _node_alloc.deallocate( upperNode, sizeof(node_type) );
 				_tree->sizeDown();
 			}
 
@@ -226,7 +221,7 @@ namespace ft {
 
 			size_type	erase( const key_type &key ) {
 				iterator it = find( key );
-				if ( it.base() ) {
+				if ( it != end() ) {
 					erase( it );
 					return 1;
 				}
@@ -285,7 +280,7 @@ namespace ft {
 					while ( _comp( key, it->first ) && it != end() )
 						--it;
 				}
-				return it == end() ? it : --it;
+				return it;
 			}
 
 			iterator	upper_bound( const key_type &key ) {

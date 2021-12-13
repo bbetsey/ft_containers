@@ -2,6 +2,10 @@
 # include <iostream>
 # include <map>
 
+# define NUMBER		30
+# define LOWERBOUND 100
+# define UPPERBOUND 20
+
 // void	test( void ) {
 // 	ft::map<int, int>				dict;
 // 	ft::map<int, int>::iterator		it;
@@ -63,7 +67,7 @@ void	testFT( void ) {
 	ft::map<int, int>::iterator		it;
 
 	std::map<int, int>	data;
-	for ( int i = 1; i < 11; ++i )
+	for ( int i = 1; i < NUMBER; ++i )
 		data.insert( std::make_pair( i, i ) );
 
 	dict.insert( data.begin(), data.end() );
@@ -72,12 +76,15 @@ void	testFT( void ) {
 	ft::map<int, int> dict2;
 	dict2 = dict1;
 
+	dict2.erase( UPPERBOUND );
 	for ( it = dict2.begin(); it != dict2.end(); ++it )
 		std::cout << it->first << " ";
 
 	std::cout << std::endl;
-	std::cout << "Begin: " << dict2.begin()->first << std::endl;
-	std::cout << "End: " << (dict2.end())->first << std::endl;
+	std::cout << "Begin:\t" << dict2.begin()->first << std::endl;
+	std::cout << "End:\t" << (dict2.end())->first << std::endl;
+	std::cout << "Lower Bound:\t" << dict2.lower_bound( LOWERBOUND )->first << std::endl;
+	std::cout << "Upper Bound:\t" << dict2.upper_bound( UPPERBOUND )->first << std::endl;
 }
 
 void	testORIG( void ) {
@@ -85,17 +92,20 @@ void	testORIG( void ) {
 	std::map<int, int>::iterator	it;
 
 	std::map<int, int>	data;
-	for ( int i = 1; i < 11; ++i )
+	for ( int i = 1; i < NUMBER; ++i )
 		data.insert( std::make_pair( i, i ) );
 
 	dict.insert( data.begin(), data.end() );
 
+	dict.erase( UPPERBOUND );
 	for ( it = dict.begin(); it != dict.end(); ++it )
 		std::cout << it->first << " ";
 
 	std::cout << std::endl;
-	std::cout << "Begin: " << dict.begin()->first << std::endl;
-	std::cout << "End: " << (dict.end())->first << std::endl;
+	std::cout << "Begin:\t" << dict.begin()->first << std::endl;
+	std::cout << "End:\t" << (dict.end())->first << std::endl;
+	std::cout << "Lower Bound:\t" << dict.lower_bound( LOWERBOUND )->first << std::endl;
+	std::cout << "Upper Bound:\t" << dict.upper_bound( UPPERBOUND )->first << std::endl;
 }
 
 int	main( void ) {
@@ -104,7 +114,7 @@ int	main( void ) {
 	std::cout << "------------------------" << std::endl;
 	testORIG();
 	std::cout << "------------------------" << std::endl;
-	constructorTest();
+	// constructorTest();
 	
 	return 0;
 }

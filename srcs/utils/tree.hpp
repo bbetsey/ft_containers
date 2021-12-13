@@ -150,7 +150,7 @@ namespace ft {
 			}
 
 			void	deleteOneChild( node_type *node ) {
-				node_type *child = ( node->right->isLeaf ) ? node->left : node->right;
+				node_type *child = node->right->isLeaf ? node->left : node->right;
 
 				replaceNode( node, child );
 				if ( node->color == BLACK ) {
@@ -159,7 +159,6 @@ namespace ft {
 					else
 						deleteCase1( child );
 				}
-
 			}
 
 			void	deleteCase1( node_type *node ) {
@@ -298,6 +297,15 @@ namespace ft {
 				while ( !tmp->right->isLeaf )
 					tmp = tmp->right;
 				return tmp;
+			}
+
+			node_type	*findNodeWithOneLeafOrMore( node_type *node ) {
+				if ( node->hasOneOrMoreLeaf() )
+					return node;
+				node = node->right;
+				while ( !node->left->isLeaf )
+					node = node->left;
+				return node;
 			}
 
 	};
