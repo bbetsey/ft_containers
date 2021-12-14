@@ -75,7 +75,7 @@ namespace ft {
 			color = ( color == RED ) ? BLACK : RED;
 		}
 
-		bool	isOnTheLeftSide( void ) {
+		bool	isOnTheLeftSide( void ) const {
 			if ( parent )
 				return this == parent->left;
 			return false;

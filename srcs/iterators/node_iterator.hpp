@@ -18,7 +18,9 @@ namespace ft {
 			typedef Value							value_type;
 			typedef std::ptrdiff_t					difference_type;
 			typedef Value&							reference;
+			typedef const Value&					const_reference;
 			typedef Value*							pointer;
+			typedef const Value*					const_pointer;
 			typedef ft::bidirectional_iterator_tag	iterator_category;
 			
 
@@ -87,16 +89,18 @@ namespace ft {
 
 			// MARK - Class Methods
 
-			iterator_type	base( void ) const		{ return node; }
+			iterator_type	base( void ) const			{ return node; }
 
-			node_iterator	&operator ++ ( void )	{ next(); return *this; }
-			node_iterator	operator ++ ( int )		{ node_iterator tmp( *this ); next(); return tmp; }
+			node_iterator	&operator ++ ( void )		{ next(); return *this; }
+			node_iterator	operator ++ ( int )			{ node_iterator tmp( *this ); next(); return tmp; }
 
-			node_iterator	&operator -- ( void )	{ prev(); return *this; }
-			node_iterator	operator -- ( int )		{ node_iterator tmp( *this ); prev(); return tmp; }
+			node_iterator	&operator -- ( void )		{ prev(); return *this; }
+			node_iterator	operator -- ( int )			{ node_iterator tmp( *this ); prev(); return tmp; }
 
-			reference		operator * ( void )		{ return *(node->value); }
-			pointer			operator -> ( void )	{ return std::addressof( *(node->value) ); }
+			reference		operator * ( void )			{ return *(node->value); }
+			const_reference	operator * ( void ) const	{ return *(node->value); }
+			pointer			operator -> ( void )		{ return std::addressof( *(node->value) ); }
+			const_pointer	operator -> ( void ) const	{ return std::addressof( *(node->value) ); }
 
 			bool			operator == ( const node_iterator &src ) const	{ return node == src.node; }
 			bool			operator != ( const node_iterator &src ) const	{ return node != src.node; }

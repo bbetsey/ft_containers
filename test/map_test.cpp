@@ -3,7 +3,7 @@
 # include <map>
 
 # define NUMBER		30
-# define LOWERBOUND 100
+# define LOWERBOUND 19
 # define UPPERBOUND 20
 
 // void	test( void ) {

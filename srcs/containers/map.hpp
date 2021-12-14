@@ -7,6 +7,8 @@
 # include "../utils/pair.hpp"
 # include "../utils/node.hpp"
 # include "../utils/tree.hpp"
+# include "../utils/equal.hpp"
+# include "../utils/lexicographical_compare.hpp"
 
 namespace ft {
 
@@ -265,39 +267,52 @@ namespace ft {
 
 			size_type	size( void )	{ return _tree->size(); }
 
+			iterator		lower_bound( const key_type &key )			{ return iterator( findLowerBound( key ) ); }
+			const_iterator	lower_bound( const key_type &key ) const	{ return const_iterator( findLowerBound( key ) ); }
 
-			// Проработать ситуацию когда текущего ключа нет в дереве
+			iterator		upper_bound( const key_type &key )			{ return iterator( findUpperBound( key ) ); }
+			const_iterator	upper_bound( const key_type &key ) const	{ return const_iterator( findUpperBound( key ) ); }
 
-			iterator	lower_bound( const key_type &key ) {
-				iterator	it( _tree->root() );
-
-				if ( _comp( it->first, key ) ) {
-					++it;
-					while ( _comp( it->first, key ) && it != end() )
-						++it;
-				} else if ( _comp( key, it->first ) ) {
-					--it;
-					while ( _comp( key, it->first ) && it != end() )
-						--it;
-				}
-				return it;
+			ft::pair<iterator, iterator>	equal_range( const key_type &key ) {
+				return ft::pair<iterator, iterator>( lower_bound( key ), upper_bound( key ) );
 			}
 
-			iterator	upper_bound( const key_type &key ) {
-				iterator	it( _tree->root() );
-
-				if ( _comp( it->first, key ) ) {
-					++it;
-					while ( _comp( it->first, key ) && it != end() )
-						++it;
-				} else if ( _comp( key, it->first ) ) {
-					--it;
-					while ( _comp( key, it->first ) && it != end() )
-						--it;
-				}
-				return it == end() ? it : ++it;
+			ft::pair<const_iterator, const_iterator>	equal_range( const key_type &key ) const {
+				return ft::pair<const_iterator, const_iterator>( lower_bound( key ), upper_bound( key ) );
 			}
 
+
+			// MARK: - Observers
+
+			key_compare	key_comp( void ) const	{ return _comp; }
+			ft::map<key_type, mapped_type, key_compare, allocator_type>::value_compare	value_comp( void ) const { return value_compare( key_comp() ); }
+
+
+			// MARK: - Non-Member Functions
+
+			friend bool	operator == ( const map &lhs, const map &rhs ) {
+				return lhs.size() == rhs.size() && ft::equal( lhs.begin(), lhs.end(), rhs.begin() );
+			}
+
+			friend bool	operator != ( const map &lhs, const map &rhs ) {
+				return !( lhs == rhs );
+			}
+
+			friend bool	operator < ( const map &lhs, const map &rhs ) {
+				return ft::lexicographical_compare( lhs.begin(), lhs.end(), rhs.begin(), rhs.end() );
+			}
+
+			friend bool	operator > ( const map &lhs, const map &rhs ) {
+				return rhs < lhs;
+			}
+
+			friend bool	operator <= ( const map &lhs, const map &rhs ) {
+				return !( rhs < lhs );
+			}
+
+			friend bool	operator >= ( const map &lhs, const map &rhs ) {
+				return !( lhs < rhs );
+			}
 
 
 		private:
@@ -343,6 +358,36 @@ namespace ft {
 						: node->right;
 				}
 				return ft::make_pair( iterator(node), true );
+			}
+
+			node_type	*findLowerBound( const key_type &key ) {
+				iterator	it( _tree->root() );
+
+				if ( _comp( it->first, key ) ) {
+					++it;
+					while ( _comp( it->first, key ) && it != end() )
+						++it;
+				} else if ( _comp( key, it->first ) ) {
+					--it;
+					while ( _comp( key, it->first ) && it != end() )
+						--it;
+				}
+				return it.base();
+			}
+
+			node_type	*findUpperBound( const key_type &key ) {
+				iterator	it( _tree->root() );
+
+				if ( _comp( it->first, key ) ) {
+					++it;
+					while ( !_comp( key, it->first ) && it != end() )
+						++it;
+				} else if ( _comp( key, it->first ) ) {
+					--it;
+					while ( !_comp( it->first, key ) && it != end() )
+						--it;
+				}
+				return it.base();
 			}
 
 			ft::pair<iterator, bool>	insertByHint( node_type *hint, const value_type &value ) {
