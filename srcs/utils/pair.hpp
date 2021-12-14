@@ -2,6 +2,7 @@
 # define PAIR_HPP
 
 # include <iostream>
+# include "node.hpp"
 
 namespace ft {
 
@@ -24,7 +25,7 @@ namespace ft {
 
 		pair( void ) : first(), second() {}
 
-		pair( const T1 &x, const T2 &y ) : first( x ), second( y ) {}
+		pair( const first_type &x, const second_type &y ) : first( x ), second( y ) {}
 
 		
 		// MARK: - Struct Copy Constructor
