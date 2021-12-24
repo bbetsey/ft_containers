@@ -28,35 +28,6 @@ namespace ft {
 
 			iterator_type	node;
 
-			void	next( void ) {
-				if ( !node->right->isLeaf ) {
-					node = node->right;
-					while ( !node->left->isLeaf )
-						node = node->left;
-				} else {
-					iterator_type	current = node;
-					while ( node->parent && !node->isOnTheLeftSide() )
-						node = node->parent;
-					node = ( node->parent ) ? node->parent : current->right;
-				}
-			}
-
-			void	prev( void ) {
-				if ( node->isLeaf )
-					node = node->parent;
-				if ( !node->left->isLeaf ) {
-					node = node->left;
-					while ( !node->right->isLeaf )
-						node = node->right;
-				} else {
-					iterator_type	current = node;
-					node = node->parent;
-					while ( node->parent && node->isOnTheLeftSide() )
-						node = node->parent;
-					node = ( node->parent ) ? node->parent : current->left;
-				}
-			}
-
 		
 		public:
 
@@ -108,6 +79,38 @@ namespace ft {
 			bool			operator < ( const node_iterator &src ) const	{ return node->value < src.node->value; }
 			bool			operator >= ( const node_iterator &src ) const	{ return node->value >= src.node->value; }
 			bool			operator <= ( const node_iterator &src ) const	{ return node->value <= src.node->value; }
+
+		
+		private:
+
+			void	next( void ) {
+				if ( !node->right->isLeaf ) {
+					node = node->right;
+					while ( !node->left->isLeaf )
+						node = node->left;
+				} else {
+					iterator_type	current = node;
+					while ( node->parent && !node->isOnTheLeftSide() )
+						node = node->parent;
+					node = ( node->parent ) ? node->parent : current->right;
+				}
+			}
+
+			void	prev( void ) {
+				if ( node->isLeaf )
+					node = node->parent;
+				if ( !node->left->isLeaf ) {
+					node = node->left;
+					while ( !node->right->isLeaf )
+						node = node->right;
+				} else {
+					iterator_type	current = node;
+					node = node->parent;
+					while ( node->parent && node->isOnTheLeftSide() )
+						node = node->parent;
+					node = ( node->parent ) ? node->parent : current->left;
+				}
+			}
 
 	};
 
