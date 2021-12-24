@@ -19,25 +19,26 @@ namespace ft {
 
 			// MARK: - Member Types
 
-			typedef Key																			key_type;
-			typedef T																			mapped_type;
-			typedef typename ft::pair<const Key, T>												value_type;
-			typedef ft::node<value_type>														node_type;
-			typedef std::size_t																	size_type;
-			typedef std::ptrdiff_t																difference_type;
-			typedef Compare																		key_compare;
-			typedef Allocator																	allocator_type;
-			typedef value_type&																	reference;
-			typedef const value_type&															const_reference;
-			typedef typename Allocator::pointer													pointer;
-			typedef typename Allocator::const_pointer											const_pointer;
-			typedef ft::node_iterator<node_type*, value_type>									iterator;
-			typedef ft::node_iterator<const node_type*, value_type>								const_iterator;
-			typedef ft::reverse_iterator<iterator>												reverse_iterator;
-			typedef ft::reverse_iterator<const_iterator>										const_reverse_iterator;
-			typedef typename allocator_type::template rebind<ft::node<value_type> >::other		allocator_rebind_node;
-			typedef typename allocator_type::template rebind<ft::rbTree<value_type> >::other	allocator_rebind_tree;
-			
+			typedef Key																key_type;
+			typedef T																mapped_type;
+			typedef typename ft::pair<const Key, T>									value_type;
+			typedef std::size_t														size_type;
+			typedef std::ptrdiff_t													difference_type;
+			typedef Compare															key_compare;
+			typedef Allocator														allocator_type;
+			typedef value_type&														reference;
+			typedef const value_type&												const_reference;
+			typedef rbTree<value_type>												tree_type;
+			typedef ft::node<value_type>											node_type;
+			typedef typename Allocator::pointer										pointer;
+			typedef typename Allocator::const_pointer								const_pointer;
+			typedef ft::node_iterator<node_type*, value_type>						iterator;
+			typedef ft::node_iterator<const node_type*, value_type>					const_iterator;
+			typedef ft::reverse_iterator<iterator>									reverse_iterator;
+			typedef ft::reverse_iterator<const_iterator>							const_reverse_iterator;
+			typedef typename allocator_type::template rebind<node_type>::other		allocator_rebind_node;
+			typedef typename allocator_type::template rebind<tree_type>::other		allocator_rebind_tree;
+
 
 			// MARK: - Member Class
 
@@ -52,17 +53,14 @@ namespace ft {
 
 				public:
 
-					typedef bool		result_type;
-					typedef value_type	first_argument_type;
-					typedef value_type	second_argument_type;
+					typedef bool			result_type;
+					typedef value_type		first_argument_type;
+					typedef value_type		second_argument_type;
 
-					result_type	operator () ( const value_type &x, const value_type &y ) const {
+					result_type	operator () ( const first_argument_type &x, const second_argument_type &y ) const {
 						return comp( x.first, y.first );
 					}
-
 			};
-
-			typedef rbTree<value_type, value_compare>											tree_type;
 
 		
 		private:
@@ -178,6 +176,10 @@ namespace ft {
 				treeInit();
 			}
 
+
+
+
+
 			ft::pair<iterator, bool>	insert( const value_type &value ) {
 				return insertByHint( _tree->root(), value );
 			}
@@ -204,6 +206,11 @@ namespace ft {
 				for ( ; first != last; ++first )
 					insert( ft::make_pair( first->first, first->second ) );
 			}
+
+
+
+
+
 
 			void	erase( iterator pos ) {
 				if ( !pos.base() || pos.base()->isLeaf ) return;
@@ -337,27 +344,35 @@ namespace ft {
 			void	treeInit( void ) {
 				_tree = _tree_alloc.allocate( sizeof(tree_type) );
 				_tree_alloc.construct( _tree );
-				_tree->setRoot( leafInit( nullptr ) );
 			}
 
-			node_type	*leafInit( node_type *parent ) {
+			node_type	*nodeInit( node_type *parent ) {
 				node_type	*node;
 
 				node = _node_alloc.allocate( sizeof(node_type) );
 				_node_alloc.construct( node );
 				node->parent = parent;
+				node->left = _tree->leaf();
+				node->right = _tree->leaf();
+				node->isLeaf = false;
+				node->color = ( node->parent ) ? RED : BLACK;
 				return node;
 			}
 
 			ft::pair<iterator, bool>	findPlace( node_type *hint, const value_type &value ) {
+				if ( hint->isLeaf )
+					return ft::make_pair( iterator(hint), true );
+
 				node_type *node = hint;
+				node_type *tmp;
 				while ( !node->isLeaf ){
 					if ( node->value->first == value.first ) return ft::make_pair( iterator(node), false );
+					tmp = node;
 					node = ( _comp( value.first, node->value->first ) )
 						? node->left
 						: node->right;
 				}
-				return ft::make_pair( iterator(node), true );
+				return ft::make_pair( iterator(tmp), true );
 			}
 
 			node_type	*findLowerBound( const key_type &key ) {
@@ -391,23 +406,35 @@ namespace ft {
 			}
 
 			ft::pair<iterator, bool>	insertByHint( node_type *hint, const value_type &value ) {
+				
 				ft::pair<iterator, bool> place = findPlace( hint, value );
 				if ( !place.second ) return place;
-				
-				node_type	*node = place.first.base();
-				node->value = _pair_alloc.allocate( sizeof(value_type) );
-				_pair_alloc.construct( node->value, value );
-				node->right = leafInit( node );
-				node->left = leafInit( node );
-				node->isLeaf = false;
-				node->color = ( node->parent ) ? RED : BLACK;
+				if ( place.first.base()->isLeaf ) {
+					_tree->setRoot( nodeInit( nullptr ) );
+					_tree->root()->value = _pair_alloc.allocate( sizeof(value_type) );
+					_pair_alloc.construct( _tree->root()->value, value );
+					_tree->leaf()->left = _tree->root();
+					_tree->leaf()->right = _tree->root();
+					return ft::make_pair( iterator( _tree->root() ), true );
+				}
 
-				_tree->insertCheck( node );
+				node_type	*parent = place.first.base();
+				node_type	*new_node = nodeInit( parent );
+
+				new_node->value = _pair_alloc.allocate( sizeof(value_type) );
+				_pair_alloc.construct( new_node->value, value );
+
+				if ( _comp( new_node->value->first, parent->value->first ) )
+					parent->left = new_node;
+				else
+					parent->right = new_node;
+
+				_tree->insertCheck( new_node );
 				_tree->sizeUp();
 
-				return place;
+				return ft::make_pair( iterator( new_node ), true );
 			}
-			
+
 
 	};
 
