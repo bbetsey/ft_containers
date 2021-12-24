@@ -67,7 +67,7 @@ void	testFT( void ) {
 	ft::map<int, int>::iterator		it;
 
 	std::map<int, int>	data;
-	for ( int i = 1; i < NUMBER; ++i )
+	for ( int i = 1; i <= NUMBER; ++i )
 		data.insert( std::make_pair( i, i ) );
 
 	dict.insert( data.begin(), data.end() );
@@ -81,10 +81,12 @@ void	testFT( void ) {
 		std::cout << it->first << " ";
 
 	std::cout << std::endl;
-	std::cout << "Begin:\t" << dict2.begin()->first << std::endl;
-	std::cout << "End:\t" << (dict2.end())->first << std::endl;
 	std::cout << "Lower Bound:\t" << dict2.lower_bound( LOWERBOUND )->first << std::endl;
 	std::cout << "Upper Bound:\t" << dict2.upper_bound( UPPERBOUND )->first << std::endl;
+
+	std::cout << "Begin:\t\t" << dict2.begin()->first << std::endl;
+	std::cout << "End:\t\t" << dict2.end()->first << std::endl;
+	std::cout << "-- Begin:\t" << (--dict2.begin())->first << std::endl;
 }
 
 void	testORIG( void ) {
@@ -92,7 +94,7 @@ void	testORIG( void ) {
 	std::map<int, int>::iterator	it;
 
 	std::map<int, int>	data;
-	for ( int i = 1; i < NUMBER; ++i )
+	for ( int i = 1; i <= NUMBER; ++i )
 		data.insert( std::make_pair( i, i ) );
 
 	dict.insert( data.begin(), data.end() );
@@ -102,18 +104,21 @@ void	testORIG( void ) {
 		std::cout << it->first << " ";
 
 	std::cout << std::endl;
-	std::cout << "Begin:\t" << dict.begin()->first << std::endl;
-	std::cout << "End:\t" << (dict.end())->first << std::endl;
 	std::cout << "Lower Bound:\t" << dict.lower_bound( LOWERBOUND )->first << std::endl;
 	std::cout << "Upper Bound:\t" << dict.upper_bound( UPPERBOUND )->first << std::endl;
+	
+	std::cout << "Begin:\t\t" << dict.begin()->first << std::endl;
+	std::cout << "End:\t\t" << dict.end()->first << std::endl;
+	std::cout << "-- Begin:\t" << (--dict.begin())->first << std::endl;
 }
 
 int	main( void ) {
 
+	std::cout << "------------ Test FT ------------" << std::endl;
 	testFT();
-	std::cout << "------------------------" << std::endl;
+	std::cout << "----------- Test ORIG -----------" << std::endl;
 	testORIG();
-	std::cout << "------------------------" << std::endl;
+	std::cout << "---------------------------------" << std::endl;
 	// constructorTest();
 	
 	return 0;
