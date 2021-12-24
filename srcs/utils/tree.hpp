@@ -8,7 +8,7 @@
 namespace ft {
 	
 
-	template < class Value, class Compare = std::less<Value> >
+	template < class Value >
 	class rbTree {
 
 		public:
@@ -16,33 +16,22 @@ namespace ft {
 			// MARK: - Member Types
 
 			typedef Value					value_type;
-			typedef ft::node<value_type>	node_type;
 			typedef size_t					size_type;
-			typedef Compare					comp_type;
+			typedef ft::node<value_type>	node_type;
+			typedef rbTree<value_type>		tree_type;
 
 
 		private:
 
-			node_type		*_root;
-			node_type		*_smallest;
-			node_type		*_biggest;
+			node_type*		_root;
+			node_type		_leaf;
 			size_type		_size;
-			comp_type		_comp;
 
 
 			// MARK: - Class Methods (private)
 
-			bool	equal( const node_type &lhs, const node_type &rhs )	{ return lhs == rhs; }
-
-			void	checkBounds( node_type *node ) {
-				
-				if ( !_biggest )
-					_biggest = node; _smallest = node; std::cout << "first" << std::endl; return;
-				std::cout << "Comprasion: " << node->value->first << " & " << _smallest->value->first << std::endl;
-				if ( _comp( *_biggest->value, *node->value ) )
-					_biggest = node; std::cout << "second" << std::endl; return;
-				if ( _comp( *node->value, *_smallest->value ) )
-					_smallest = node; std::cout << "third" << std::endl; 
+			bool	equal( const node_type &lhs, const node_type &rhs ) {
+				return !_comp( lhs.value, rhs.value ) && !_comp( lhs.value, rhs.value );
 			}
 
 			void	leftRotate( node_type *node ) {
@@ -238,7 +227,31 @@ namespace ft {
 
 			// MARK: - Class Constructors
 
-			rbTree( void ) : _root( nullptr ), _smallest( nullptr ), _biggest( nullptr ), _size( 0 ), _comp( comp_type() ) {}
+			rbTree( void ) : _size( 0 ) {
+				_leaf.left = &_leaf;
+				_leaf.right = &_leaf;
+				_leaf.parent = nullptr;
+				_leaf.isLeaf = true;
+				_leaf.color = BLACK;
+				_root = &_leaf;
+			}
+
+
+			// MARK: - Class Copy Constructor
+
+			rbTree( const tree_type &src ) : _size( src._size ), _leaf( src._leaf ), _root( src._root ) {}
+
+			
+			// MARK: - Class Assignation Overload
+
+			rbTree	&operator = ( const tree_type &src ) {
+				if ( this != &src ) {
+					_leaf = src._leaf;
+					_size = src._size;
+					_root = src._root;
+				}
+				return *this;
+			}
 
 
 			// MARK: - Class Distructor
@@ -249,19 +262,16 @@ namespace ft {
 			// MARK: - Getters
 
 			node_type		*root( void )		{ return _root; }
-			node_type		*biggest( void )	{ return _biggest; }
-			node_type		*smallest( void )	{ return _smallest; }
+			node_type		*leaf( void )		{ return &_leaf; }
 			size_type		size( void )		{ return _size; }
 
 
 			// MARK: - Setters
 
 			void	setRoot( node_type *root )		{ _root = root; }
-			void	setBiggest( node_type *node )	{ _biggest = node; }
-			void	setSmallest( node_type *node )	{ _smallest = node; }
 			void	setSize( size_type new_size )	{ _size = new_size; }
-			void	sizeUp( void )					{ _size += 1; }
-			void	sizeDown( void )				{ _size -= 1; }
+			void	sizeUp( void )					{ ++_size; }
+			void	sizeDown( void )				{ --_size; }
 
 
 			// MARK: - Class Methods
@@ -281,22 +291,16 @@ namespace ft {
 				return tmp;
 			}
 
-			node_type	*end( void ) {
-				node_type *tmp = _root;
-
-				while ( !tmp->right->isLeaf )
-					tmp = tmp->right;
-				tmp = tmp->right;
-				tmp->value = begin()->value;
-				return tmp;
-			}
-
 			node_type	*last( void ) {
 				node_type *tmp = _root;
 
 				while ( !tmp->right->isLeaf )
 					tmp = tmp->right;
 				return tmp;
+			}
+
+			node_type	*end( void ) {
+				return last()->right;
 			}
 
 			node_type	*findNodeWithOneLeafOrMore( node_type *node ) {

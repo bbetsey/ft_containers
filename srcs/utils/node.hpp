@@ -85,6 +85,10 @@ namespace ft {
 			return left->isLeaf || right->isLeaf;
 		}
 
+		bool	hasTwoLeafs( void ) {
+			return left->isLeaf && right->isLeaf;
+		}
+
 		node	*getFather( void ) {
 			return parent;
 		}
@@ -112,6 +116,7 @@ namespace ft {
 				return getBrother( parent );
 			return NULL;
 		}
+		
 
 	};
 
