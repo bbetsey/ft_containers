@@ -230,7 +230,7 @@ namespace ft {
 			rbTree( void ) : _size( 0 ) {
 				_leaf.left = &_leaf;
 				_leaf.right = &_leaf;
-				_leaf.parent = nullptr;
+				_leaf.parent = &_leaf;
 				_leaf.isLeaf = true;
 				_leaf.color = BLACK;
 				_root = &_leaf;

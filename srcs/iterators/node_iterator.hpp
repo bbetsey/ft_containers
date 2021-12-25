@@ -84,7 +84,8 @@ namespace ft {
 		private:
 
 			void	next( void ) {
-				if ( !node->right->isLeaf ) {
+				if ( node->isLeaf ) node = node->parent; 
+				else if ( !node->right->isLeaf ) {
 					node = node->right;
 					while ( !node->left->isLeaf )
 						node = node->left;
@@ -97,17 +98,19 @@ namespace ft {
 			}
 
 			void	prev( void ) {
-				if ( node->isLeaf )
-					node = node->parent;
-				if ( !node->left->isLeaf ) {
+				if ( node->isLeaf ) {
+					node = node->right;
+				} else if ( !node->left->isLeaf ) {
 					node = node->left;
 					while ( !node->right->isLeaf )
 						node = node->right;
 				} else {
 					iterator_type	current = node;
 					node = node->parent;
-					while ( node->parent && node->isOnTheLeftSide() )
+					while ( node->isOnTheLeftSide() ) {
+						current = node;
 						node = node->parent;
+					}
 					node = ( node->parent ) ? node->parent : current->left;
 				}
 			}

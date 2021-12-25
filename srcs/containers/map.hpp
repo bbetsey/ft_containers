@@ -176,10 +176,6 @@ namespace ft {
 				treeInit();
 			}
 
-
-
-
-
 			ft::pair<iterator, bool>	insert( const value_type &value ) {
 				return insertByHint( _tree->root(), value );
 			}
@@ -206,11 +202,6 @@ namespace ft {
 				for ( ; first != last; ++first )
 					insert( ft::make_pair( first->first, first->second ) );
 			}
-
-
-
-
-
 
 			void	erase( iterator pos ) {
 				if ( !pos.base() || pos.base()->isLeaf ) return;
@@ -415,6 +406,9 @@ namespace ft {
 					_pair_alloc.construct( _tree->root()->value, value );
 					_tree->leaf()->left = _tree->root();
 					_tree->leaf()->right = _tree->root();
+					_tree->leaf()->parent = _tree->root();
+					_tree->leaf()->value = _tree->root()->value;
+					_tree->sizeUp();
 					return ft::make_pair( iterator( _tree->root() ), true );
 				}
 
@@ -431,6 +425,12 @@ namespace ft {
 
 				_tree->insertCheck( new_node );
 				_tree->sizeUp();
+				if ( _comp( value.first, _tree->leaf()->left->value->first ) ) {
+					_tree->leaf()->left = new_node;
+					_tree->leaf()->value = new_node->value;
+				} else if ( _comp( _tree->leaf()->right->value->first, value.first ) ) {
+					_tree->leaf()->right = new_node;
+				}
 
 				return ft::make_pair( iterator( new_node ), true );
 			}

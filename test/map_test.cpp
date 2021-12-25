@@ -1,32 +1,13 @@
 # include "test.hpp"
 # include <iostream>
 # include <map>
+# include <time.h>
+# include <stdio.h>
+# include <stdlib.h>
 
 # define NUMBER		30
 # define LOWERBOUND 19
 # define UPPERBOUND 20
-
-// void	test( void ) {
-// 	ft::map<int, int>				dict;
-// 	ft::map<int, int>::iterator		it;
-// 	std::map<int, int>				orig;
-// 	std::map<int, int>::iterator	it_orig;
-
-// 	std::map<int, int>				data;
-// 	for ( int i = 1; i < 11; ++i )
-// 		data.insert( std::make_pair( i, i ) );
-
-// 	dict.insert( data.begin(), data.end() );
-// 	orig.insert( data.begin(), data.end() );
-
-// 	for ( it_orig = orig.begin() ; it_orig != orig.end(); ++it_orig )
-// 		std::cout << it_orig->first << " ";
-
-// 	std::cout << std::endl;
-
-// 	for ( it = dict.begin() ; it != dict.end(); ++it )
-// 		std::cout << *it.base()->value << std::endl;
-// }
 
 
 void	constructorTest( void ) {
@@ -112,12 +93,64 @@ void	testORIG( void ) {
 	std::cout << "-- Begin:\t" << (--dict.begin())->first << std::endl;
 }
 
+std::map<int, int>	makeRandomMap( void ) {
+	int low_dist  = 1;
+	int high_dist = 100;
+	std::srand( ( unsigned int )std::time( nullptr ) );
+
+	std::map<int, int>	data;
+	for ( int i = 1; i <= NUMBER; ++i )
+		data.insert( std::make_pair( low_dist + std::rand() % ( high_dist - low_dist ), i ) );
+	return data;
+}
+
+void	iteratorTest( void ) {
+	std::map<int, int>	orig;
+	ft::map<int, int>	dict;
+
+	std::map<int, int>	data = makeRandomMap();
+	
+	dict.insert( data.begin(), data.end() );
+	orig.insert( data.begin(), data.end() );
+
+	std::map<int, int>::iterator	it_orig = orig.begin();
+	ft::map<int, int>::iterator		it_ft = dict.begin();
+
+	for ( ; it_ft != dict.end(); ++it_orig, ++it_ft ) {
+		std::cout << "Orig: " << it_orig->first << " \tFT: " << it_ft->first << std::endl;
+	}
+
+	std::cout << "------- reverse -------" << std::endl;
+
+	std::cout << "Orig: " << it_orig->first << " \tFT: " << it_ft->first << std::endl;
+	// ++it_orig; ++it_ft;
+	// std::cout << "Orig: " << it_orig->first << " \tFT: " << it_ft->first << std::endl;
+
+	std::map<int, int>::reverse_iterator	rit_orig( it_orig );
+	ft::map<int, int>::reverse_iterator		rit_ft( it_ft );
+
+	// std::cout << "Orig: " << rit_orig->first << "  \tFT: " << rit_ft->first << std::endl;
+	// ++rit_ft; ++rit_orig;
+	// std::cout << "Orig: " << rit_orig->first << "  \tFT: " << rit_ft->first << std::endl;
+	// ++rit_ft; ++rit_orig;
+	// std::cout << "Orig: " << rit_orig->first << "  \tFT: " << rit_ft->first << std::endl;
+	// ++rit_ft; ++rit_orig;
+	// std::cout << "Orig: " << rit_orig->first << "  \tFT: " << rit_ft->first << std::endl;
+
+	++rit_ft; ++rit_orig;
+	for ( ; !rit_ft.base().base()->isLeaf; rit_ft++, rit_orig++ )
+		std::cout << "Orig: " << rit_orig->first << "  \tFT: " << rit_ft->first << std::endl;
+}
+
 int	main( void ) {
 
+	std::cout << std::endl;
 	std::cout << "------------ Test FT ------------" << std::endl;
 	testFT();
 	std::cout << "----------- Test ORIG -----------" << std::endl;
 	testORIG();
+	std::cout << "----------- Test ITER -----------" << std::endl;
+	iteratorTest();
 	std::cout << "---------------------------------" << std::endl;
 	// constructorTest();
 	
