@@ -130,95 +130,59 @@ namespace ft {
 
 			// -------------------- DELETE MODE --------------------
 
-			void	replaceNode( node_type *node, node_type *child ) {
-				child->parent = node->parent;
-				if ( node->isOnTheLeftSide() )
-					node->parent->left = child;
-				else
-					node->parent->right = child;
-			}
-
-			void	deleteOneChild( node_type *node ) {
-				node_type *child = node->right->isLeaf ? node->left : node->right;
-
-				replaceNode( node, child );
-				if ( node->color == BLACK ) {
-					if ( child->color == RED )
-						child->color = BLACK;
-					else
-						deleteCase1( child );
-				}
-			}
-
-			void	deleteCase1( node_type *node ) {
-				if ( node->parent )
-					deleteCase2( node );
-			}
-
-			void	deleteCase2( node_type *node ) {
-				node_type *brother = node->getBrother();
-
-				if ( brother->color == RED ) {
-					node->parent->color = RED;
-					brother->color = BLACK;
-					if ( node->isOnTheLeftSide() )
-						leftRotate( node->parent );
-					else
-						rightRotate( node->parent );
-				}
-				deleteCase3( node );
-			}
-
-			void	deleteCase3( node_type *node ) {
-				node_type *brother = node->getBrother();
-
-				if ( node->parent->color == BLACK && brother->color == BLACK && brother->right->color == BLACK && brother->left->color == BLACK ) {
-					brother->color = RED;
-					deleteCase1( node->parent );
-				} else
-					deleteCase4( node );
-			}
-
-			void	deleteCase4( node_type *node ) {
-				node_type *brother = node->getBrother();
-
-				if ( node->parent->color == RED && brother->color == BLACK && brother->right->color == BLACK && brother->left->color == BLACK ) {
-					brother->color = RED;
-					node->parent->color = BLACK;
-				} else
-					deleteCase5( node );
-			}
-
-			void	deleteCase5( node_type *node ) {
-				node_type *brother = node->getBrother();
-
-				if ( brother->color == BLACK ) {
-					if ( node->isOnTheLeftSide() && brother->right->color == BLACK && brother->left->color == RED ) {
-						brother->color = RED;
-						brother->left->color = BLACK;
-						rightRotate( brother );
-					} else if ( !node->isOnTheLeftSide() && brother->left->color == BLACK && brother->right->color == RED ) {
-						brother->color = RED;
-						brother->right->color = BLACK;
-						leftRotate( brother );
+			void	checkDelete( node_type *node ) {
+				while ( node != _root && node->color == BLACK ) {
+					if ( node->isOnTheLeftSide() ) {
+						node_type *brother = node->parent->right;
+						if ( brother->color == RED ) {
+							brother->color = BLACK;
+							node->parent->color = RED;
+							leftRotate( node->parent );
+							brother = node->parent->right;
+						}
+						if ( brother->left->color == BLACK && brother->right->color == BLACK ) {
+							brother->color = RED;
+							node = node->parent;
+						} else {
+							if ( brother->color == BLACK ) {
+								brother->left->color = BLACK;
+								brother->color = RED;
+								rightRotate( brother );
+								brother = node->parent->right;
+							}
+							brother->color = node->parent->color;
+							node->parent->color = BLACK;
+							brother->right->color = BLACK;
+							leftRotate( node->parent );
+							node = _root;
+						}
+					} else {
+						node_type *brother = node->parent->left;
+						if ( brother->color == RED ) {
+							brother->color = BLACK;
+							node->parent->color = RED;
+							rightRotate( node->parent );
+							brother = node->parent->left;
+						}
+						if ( brother->left->color == BLACK && brother->right->color == BLACK ) {
+							brother->color = RED;
+							node = node->parent;
+						} else {
+							if ( brother->color == BLACK ) {
+								brother->left->color = BLACK;
+								brother->color = RED;
+								leftRotate( brother );
+								brother = node->parent->left;
+							}
+							brother->color = node->parent->color;
+							node->parent->color = BLACK;
+							brother->right->color = BLACK;
+							rightRotate( node->parent );
+							node = _root;
+						}
 					}
 				}
-				deleteCase6( node );
-			}
-
-			void	deleteCase6( node_type *node ) {
-				node_type *brother = node->getBrother();
-
-				brother->color = node->parent->color;
-				node->parent->color = BLACK;
-				
-				if ( node->isOnTheLeftSide() ) {
-					brother->right->color = BLACK;
-					leftRotate( node->parent );
-				} else {
-					brother->left->color = BLACK;
-					rightRotate( node->parent );
-				}
+				node->color = BLACK;
 			}
 
 
@@ -279,6 +243,22 @@ namespace ft {
 			void	insertCheck( node_type *node )	{ insertCase1( node ); }
 			void	deleteCheck( node_type *node )	{ deleteOneChild( node ); }
 
+			node_type	*getLast( void ) {
+				node_type* tmp = _root;
+				while (!tmp->right->isLeaf) {
+					tmp = tmp->right;
+				}
+				return tmp;
+			}
+
+			node_type	*getBegin( void ) {
+				node_type* tmp = _root;
+				while (!tmp->left->isLeaf) {
+					tmp = tmp->left;
+				}
+				return tmp;
+			}
+
 			node_type	*begin( void ) {
 				return _leaf.left;
 			}
@@ -298,6 +278,38 @@ namespace ft {
 				while ( !node->left->isLeaf )
 					node = node->left;
 				return node;
+			}
+
+			void	nodeDelete( node_type *node ) {
+				if ( !node || node->isLeaf ) return;
+				
+				node_type *tmp, *tmp2;
+				tmp2 = findNodeWithOneLeafOrMore( node );
+				tmp = ( tmp2->right->isLeaf )
+					? tmp2->left
+					: tmp2->right;
+				node->parent = tmp2->parent;
+				if ( tmp2->parent ) {
+					if ( tmp2->isOnTheLeftSide() )
+						tmp2->parent->left = tmp;
+					else
+						tmp2->parent->right = tmp;
+				} else {
+					_root = tmp;
+				}
+				if ( tmp2 != node ) {
+					delete node->value;
+					value_type *new_value = new value_type( *tmp2->value );
+					node->value = new_value;
+				}
+				if ( tmp2->color == BLACK )
+					checkDelete( tmp );
+				--_size;
+				if ( _leaf.right->value->first == tmp2->value->first )
+					_leaf.right = getLast();
+				else if ( _leaf.left->value->first == tmp2->value->first )
+					_leaf.left = getBegin();
+				delete tmp2;
 			}
 
 	};

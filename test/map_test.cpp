@@ -57,7 +57,8 @@ void	testFT( void ) {
 	ft::map<int, int> dict2;
 	dict2 = dict1;
 
-	dict2.erase( UPPERBOUND );
+	dict2.erase( dict2.begin() );
+	dict2.erase( 30 );
 	for ( it = dict2.begin(); it != dict2.end(); ++it )
 		std::cout << it->first << " ";
 
@@ -80,7 +81,8 @@ void	testORIG( void ) {
 
 	dict.insert( data.begin(), data.end() );
 
-	dict.erase( UPPERBOUND );
+	dict.erase( dict.begin() );
+	dict.erase( 30 );
 	for ( it = dict.begin(); it != dict.end(); ++it )
 		std::cout << it->first << " ";
 
@@ -104,6 +106,22 @@ std::map<int, int>	makeRandomMap( void ) {
 	return data;
 }
 
+void	eraseTest( ft::map<int, int> mp, std::map<int, int> mpo ) {
+
+	std::cout << "----------- Test ERASE -----------" << std::endl;
+
+	ft::map<int, int>::iterator		it = mp.begin();
+	std::map<int, int>::iterator	ito = mpo.begin();
+
+	mp.erase( mp.begin() );
+	mpo.erase( mpo.begin() );
+	mp.erase( mp.last() );
+	mpo.erase( (--mpo.end()) );
+
+	for ( it = mp.begin(), ito = mpo.begin(); it != mp.end(); ++it, ++ito )
+		std::cout << "Orig: " << ito->first << " \tFT: " << it->first << std::endl;	
+}
+
 void	iteratorTest( void ) {
 	std::map<int, int>	orig;
 	ft::map<int, int>	dict;
@@ -123,15 +141,14 @@ void	iteratorTest( void ) {
 	std::cout << "------- reverse -------" << std::endl;
 
 	std::cout << "Orig: " << it_orig->first << " \tFT: " << it_ft->first << std::endl;
-	// ++it_orig; ++it_ft;
-	// std::cout << "Orig: " << it_orig->first << " \tFT: " << it_ft->first << std::endl;
 
 	std::map<int, int>::reverse_iterator	rit_orig( it_orig );
 	ft::map<int, int>::reverse_iterator		rit_ft( it_ft );
 
-	// ++rit_ft; ++rit_orig;
 	for ( ; rit_ft.base() != dict.begin(); ++rit_ft, ++rit_orig )
 		std::cout << "Orig: " << rit_orig->first << "  \tFT: " << rit_ft->first << std::endl;
+	
+	eraseTest( dict, orig );
 }
 
 void	reverseIteratorTest( void ) {
@@ -150,15 +167,14 @@ void	reverseIteratorTest( void ) {
 	std::map<int, int>::reverse_iterator	rito = mpo.rbegin();
 	std::map<int, int>::reverse_iterator	rito2 = mpo.rend();
 
-	std::cout << "Orig: " << mpo.rbegin()->first << " \tFT: " << mp.last()->first << std::endl;
-
-	// std::cout << "Orig: " << rito->first << " \tFT: " << rit->first << std::endl;
+	std::cout << "Orig: " << rito->first << " \tFT: " << rit->first << std::endl;
 	++rit; ++rito;
 	--rit2; --rito2;
 	std::cout << "Orig: " << rito->first << " \tFT: " << rit->first << std::endl;
 	std::cout << "Orig: " << rito2->first << " \tFT: " << rit2->first << std::endl;
 
 }
+
 
 int	main( void ) {
 

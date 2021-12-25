@@ -206,14 +206,8 @@ namespace ft {
 			}
 
 			void	erase( iterator pos ) {
-				if ( !pos.base() || pos.base()->isLeaf ) return;
-				node_type *upperNode = _tree->findNodeWithOneLeafOrMore( pos.base() );
-				pos.base()->value = upperNode->value;
-				
-				_tree->deleteCheck( upperNode );
-				// _node_alloc.destroy( upperNode );
-				// _node_alloc.deallocate( upperNode, sizeof(node_type) );
-				_tree->sizeDown();
+				iterator tmp = pos;
+				_tree->nodeDelete( tmp.base() );
 			}
 
 			void	erase( iterator first, iterator last ) {
