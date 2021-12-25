@@ -155,8 +155,10 @@ namespace ft {
 			iterator				end( void )				{ return _tree->end(); }
 			const_iterator			end( void ) const		{ return _tree->end(); }
 
-			reverse_iterator		rbegin( void )			{ return reverse_iterator( iterator( _tree->last() ) ); }
-			const_reverse_iterator	rbegin( void ) const	{ return const_reverse_iterator( iterator( _tree->last() ) ); }
+			iterator				last( void )			{ return _tree->last(); }
+
+			reverse_iterator		rbegin( void )			{ return --reverse_iterator( last() ); }
+			const_reverse_iterator	rbegin( void ) const	{ return --const_reverse_iterator( last() ); }
 
 			reverse_iterator		rend( void )			{ return reverse_iterator( iterator( _tree->end() ) ); }
 			const_reverse_iterator	rend( void ) const		{ return const_reverse_iterator( iterator( _tree->end() ) ); }
@@ -263,7 +265,7 @@ namespace ft {
 				return end();
 			}
 
-			size_type	size( void )	{ return _tree->size(); }
+			size_type		size( void )	{ return _tree->size(); }
 
 			iterator		lower_bound( const key_type &key )			{ return iterator( findLowerBound( key ) ); }
 			const_iterator	lower_bound( const key_type &key ) const	{ return const_iterator( findLowerBound( key ) ); }
@@ -407,7 +409,6 @@ namespace ft {
 					_tree->leaf()->left = _tree->root();
 					_tree->leaf()->right = _tree->root();
 					_tree->leaf()->parent = _tree->root();
-					_tree->leaf()->value = _tree->root()->value;
 					_tree->sizeUp();
 					return ft::make_pair( iterator( _tree->root() ), true );
 				}
@@ -427,7 +428,6 @@ namespace ft {
 				_tree->sizeUp();
 				if ( _comp( value.first, _tree->leaf()->left->value->first ) ) {
 					_tree->leaf()->left = new_node;
-					_tree->leaf()->value = new_node->value;
 				} else if ( _comp( _tree->leaf()->right->value->first, value.first ) ) {
 					_tree->leaf()->right = new_node;
 				}

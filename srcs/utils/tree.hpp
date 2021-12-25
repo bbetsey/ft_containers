@@ -279,24 +279,12 @@ namespace ft {
 			void	insertCheck( node_type *node )	{ insertCase1( node ); }
 			void	deleteCheck( node_type *node )	{ deleteOneChild( node ); }
 
-			// node_type	*begin( void )	{ return _smallest; }
-			// node_type	*last( void )	{ return _biggest; }
-			// node_type	*end( void )	{ _biggest->right->value = _smallest->value; return _biggest->right; }
-
 			node_type	*begin( void ) {
-				node_type *tmp = _root;
-
-				while ( !tmp->left->isLeaf )
-					tmp = tmp->left;
-				return tmp;
+				return _leaf.left;
 			}
 
 			node_type	*last( void ) {
-				node_type *tmp = _root;
-
-				while ( !tmp->right->isLeaf )
-					tmp = tmp->right;
-				return tmp;
+				return _leaf.right;
 			}
 
 			node_type	*end( void ) {

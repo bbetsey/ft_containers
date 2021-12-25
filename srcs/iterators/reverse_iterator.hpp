@@ -63,12 +63,12 @@ namespace ft {
 
 			//MARK: - Class Valid Expressions Overload
 
-			reference	operator * ( void ) const {
+			reference	operator * ( void ) {
 				Iterator	tmp( it );
 				return *(--tmp);
 			}
 
-			pointer		operator -> ( void ) const				{ return std::addressof( operator*() ); }
+			pointer		operator -> ( void )					{ return std::addressof( operator*() ); }
 			reference	operator [] ( difference_type n ) const	{ return base()[- n - 1]; }
 
 			reverse_iterator	&operator ++ ( void )			{ --it; return *this; }		

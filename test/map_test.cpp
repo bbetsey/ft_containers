@@ -129,17 +129,35 @@ void	iteratorTest( void ) {
 	std::map<int, int>::reverse_iterator	rit_orig( it_orig );
 	ft::map<int, int>::reverse_iterator		rit_ft( it_ft );
 
-	// std::cout << "Orig: " << rit_orig->first << "  \tFT: " << rit_ft->first << std::endl;
 	// ++rit_ft; ++rit_orig;
-	// std::cout << "Orig: " << rit_orig->first << "  \tFT: " << rit_ft->first << std::endl;
-	// ++rit_ft; ++rit_orig;
-	// std::cout << "Orig: " << rit_orig->first << "  \tFT: " << rit_ft->first << std::endl;
-	// ++rit_ft; ++rit_orig;
-	// std::cout << "Orig: " << rit_orig->first << "  \tFT: " << rit_ft->first << std::endl;
-
-	++rit_ft; ++rit_orig;
-	for ( ; !rit_ft.base().base()->isLeaf; rit_ft++, rit_orig++ )
+	for ( ; rit_ft.base() != dict.begin(); ++rit_ft, ++rit_orig )
 		std::cout << "Orig: " << rit_orig->first << "  \tFT: " << rit_ft->first << std::endl;
+}
+
+void	reverseIteratorTest( void ) {
+	ft::map<int, int>	mp;
+	std::map<int, int>	mpo;
+
+	mp.insert( ft::make_pair( 5, 5 ) );
+	mp.insert( ft::make_pair( 3, 3 ) );
+	mp.insert( ft::make_pair( 7, 7 ) );
+	mpo.insert( std::make_pair( 5, 5 ) );
+	mpo.insert( std::make_pair( 3, 3 ) );
+	mpo.insert( std::make_pair( 7, 7 ) );
+
+	ft::map<int, int>::reverse_iterator		rit = mp.rbegin();
+	ft::map<int, int>::reverse_iterator		rit2 = mp.rend();
+	std::map<int, int>::reverse_iterator	rito = mpo.rbegin();
+	std::map<int, int>::reverse_iterator	rito2 = mpo.rend();
+
+	std::cout << "Orig: " << mpo.rbegin()->first << " \tFT: " << mp.last()->first << std::endl;
+
+	// std::cout << "Orig: " << rito->first << " \tFT: " << rit->first << std::endl;
+	++rit; ++rito;
+	--rit2; --rito2;
+	std::cout << "Orig: " << rito->first << " \tFT: " << rit->first << std::endl;
+	std::cout << "Orig: " << rito2->first << " \tFT: " << rit2->first << std::endl;
+
 }
 
 int	main( void ) {
@@ -151,6 +169,8 @@ int	main( void ) {
 	testORIG();
 	std::cout << "----------- Test ITER -----------" << std::endl;
 	iteratorTest();
+	std::cout << "----------- Test REV ITER -----------" << std::endl;
+	reverseIteratorTest();
 	std::cout << "---------------------------------" << std::endl;
 	// constructorTest();
 	
