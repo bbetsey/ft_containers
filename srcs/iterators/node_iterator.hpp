@@ -84,7 +84,7 @@ namespace ft {
 		private:
 
 			void	next( void ) {
-				if ( node->isLeaf ) node = node->parent; 
+				if ( node->isLeaf ) node = node->left; 
 				else if ( !node->right->isLeaf ) {
 					node = node->right;
 					while ( !node->left->isLeaf )

@@ -423,13 +423,13 @@ namespace ft {
 	template < class T, class Alloc >
 	typename ft::vector<T, Alloc>::reverse_iterator
 	ft::vector<T, Alloc>::rbegin( void ) {
-		return reverse_iterator( _start + _size );
+		return reverse_iterator( _start + _size - 1 );
 	}
 
 	template < class T, class Alloc >
 	typename ft::vector<T, Alloc>::const_reverse_iterator
 	ft::vector<T, Alloc>::rbegin( void ) const {
-		return reverse_iterator( _start + _size );
+		return reverse_iterator( _start + _size - 1 );
 	}
 
 	// » rend

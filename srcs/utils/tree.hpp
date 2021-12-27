@@ -30,10 +30,6 @@ namespace ft {
 
 			// MARK: - Class Methods (private)
 
-			bool	equal( const node_type &lhs, const node_type &rhs ) {
-				return !_comp( lhs.value, rhs.value ) && !_comp( lhs.value, rhs.value );
-			}
-
 			void	leftRotate( node_type *node ) {
 				node_type	*pivot = node->right;
 
@@ -203,7 +199,14 @@ namespace ft {
 
 			// MARK: - Class Copy Constructor
 
-			rbTree( const tree_type &src ) : _size( src._size ), _leaf( src._leaf ), _root( src._root ) {}
+			rbTree( const tree_type & ) : _size( 0 ) {
+				_leaf.left = &_leaf;
+				_leaf.right = &_leaf;
+				_leaf.parent = &_leaf;
+				_leaf.isLeaf = true;
+				_leaf.color = BLACK;
+				_root = &_leaf;
+			}
 
 			
 			// MARK: - Class Assignation Overload
@@ -232,7 +235,7 @@ namespace ft {
 
 			// MARK: - Setters
 
-			void	setRoot( node_type *root )		{ _root = root; }
+			void	setRoot( node_type *root )		{ _root = root; _leaf.left = _root; _leaf.right = _root; }
 			void	setSize( size_type new_size )	{ _size = new_size; }
 			void	sizeUp( void )					{ ++_size; }
 			void	sizeDown( void )				{ --_size; }
@@ -241,21 +244,18 @@ namespace ft {
 			// MARK: - Class Methods
 			
 			void	insertCheck( node_type *node )	{ insertCase1( node ); }
-			void	deleteCheck( node_type *node )	{ deleteOneChild( node ); }
 
 			node_type	*getLast( void ) {
 				node_type* tmp = _root;
-				while (!tmp->right->isLeaf) {
+				while (!tmp->right->isLeaf)
 					tmp = tmp->right;
-				}
 				return tmp;
 			}
 
 			node_type	*getBegin( void ) {
 				node_type* tmp = _root;
-				while (!tmp->left->isLeaf) {
+				while (!tmp->left->isLeaf)
 					tmp = tmp->left;
-				}
 				return tmp;
 			}
 
@@ -268,7 +268,7 @@ namespace ft {
 			}
 
 			node_type	*end( void ) {
-				return last()->right;
+				return &_leaf;
 			}
 
 			node_type	*findNodeWithOneLeafOrMore( node_type *node ) {
@@ -283,33 +283,32 @@ namespace ft {
 			void	nodeDelete( node_type *node ) {
 				if ( !node || node->isLeaf ) return;
 				
-				node_type *tmp, *tmp2;
-				tmp2 = findNodeWithOneLeafOrMore( node );
-				tmp = ( tmp2->right->isLeaf )
-					? tmp2->left
-					: tmp2->right;
-				node->parent = tmp2->parent;
-				if ( tmp2->parent ) {
-					if ( tmp2->isOnTheLeftSide() )
-						tmp2->parent->left = tmp;
+				node_type *tmp, *upperNode;
+				upperNode = findNodeWithOneLeafOrMore( node );
+				tmp = ( upperNode->left->isLeaf )
+					? upperNode->right
+					: upperNode->left;
+				tmp->parent = upperNode->parent;
+				if ( upperNode->parent ) {
+					if ( upperNode->isOnTheLeftSide() )
+						upperNode->parent->left = tmp;
 					else
-						tmp2->parent->right = tmp;
+						upperNode->parent->right = tmp;
 				} else {
 					_root = tmp;
 				}
-				if ( tmp2 != node ) {
+				if ( upperNode != node ) {
 					delete node->value;
-					value_type *new_value = new value_type( *tmp2->value );
+					value_type *new_value = new value_type( *upperNode->value );
 					node->value = new_value;
 				}
-				if ( tmp2->color == BLACK )
-					checkDelete( tmp );
+				if ( upperNode->color == BLACK )	checkDelete( tmp );
 				--_size;
-				if ( _leaf.right->value->first == tmp2->value->first )
-					_leaf.right = getLast();
-				else if ( _leaf.left->value->first == tmp2->value->first )
-					_leaf.left = getBegin();
-				delete tmp2;
+
+				if ( _leaf.right == node )		_leaf.right = getLast();
+				else if ( _leaf.left == node )	_leaf.left = getBegin();
+
+				delete upperNode;
 			}
 
 	};

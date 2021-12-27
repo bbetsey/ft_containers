@@ -46,12 +46,12 @@ namespace ft {
 
 		// MARK: - Struct Copy Constructor
 
-		node( const node &src ) : value( src.value ), color( src.color ), isLeaf( src.isLeaf ), parent( src.parent ), left( src.left ), right( src.right ) {}
+		// node( const node &src ) : value( src.value ), color( src.color ), isLeaf( src.isLeaf ), parent( src.parent ), left( src.left ), right( src.right ) {}
 
 
 		// MARK: - Struct Distructor
 
-		~node( void ) { if ( value ) delete value; }
+		~node( void ) { delete value; }
 
 
 		// MARK: - Struct Assignation Overload

@@ -63,22 +63,19 @@ namespace ft {
 
 			//MARK: - Class Valid Expressions Overload
 
-			reference	operator * ( void ) {
-				Iterator	tmp( it );
-				return *(--tmp);
-			}
-
+			reference	operator * ( void ) 					{ return *it; }
 			pointer		operator -> ( void )					{ return std::addressof( operator*() ); }
-			reference	operator [] ( difference_type n ) const	{ return base()[- n - 1]; }
+			reference	operator [] ( difference_type n ) const	{ return it[- n - 1]; }
 
-			reverse_iterator	&operator ++ ( void )			{ --it; return *this; }		
+			reverse_iterator	&operator ++ ( void )			{ --it; return *this; }
+			reverse_iterator	&operator -- ( void )			{ ++it; return *this; }
+			
 			reverse_iterator	operator ++ ( int ) {
 				reverse_iterator	tmp( *this );
 				--it;
 				return tmp;
 			}
-
-			reverse_iterator	&operator -- ( void )			{ ++it; return *this; }
+			
 			reverse_iterator	operator -- ( int ) {
 				reverse_iterator	tmp( *this );
 				++it;
@@ -86,8 +83,8 @@ namespace ft {
 			}
 
 
-			reverse_iterator	operator + ( difference_type n ) const	{ return reverse_iterator( base() - n ); }
-			reverse_iterator	operator - ( difference_type n ) const	{ return reverse_iterator( base() + n ); }
+			reverse_iterator	operator + ( difference_type n ) const	{ return reverse_iterator( it - n ); }
+			reverse_iterator	operator - ( difference_type n ) const	{ return reverse_iterator( it + n ); }
 
 			reverse_iterator	&operator += ( difference_type n ) 		{ it -= n; return *this; }
 			reverse_iterator	&operator -= ( difference_type n )		{ it += n; return *this; }

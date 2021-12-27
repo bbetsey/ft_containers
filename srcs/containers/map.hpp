@@ -121,6 +121,8 @@ namespace ft {
 
 			~map( void ) {
 				burnTheTree( _tree->root() );
+				_tree_alloc.destroy( _tree );
+				_tree_alloc.deallocate( _tree, sizeof( tree_type ) );
 			}
 
 
@@ -157,8 +159,8 @@ namespace ft {
 
 			iterator				last( void )			{ return _tree->last(); }
 
-			reverse_iterator		rbegin( void )			{ return --reverse_iterator( last() ); }
-			const_reverse_iterator	rbegin( void ) const	{ return --const_reverse_iterator( last() ); }
+			reverse_iterator		rbegin( void )			{ return reverse_iterator( last() ); }
+			const_reverse_iterator	rbegin( void ) const	{ return const_reverse_iterator( last() ); }
 
 			reverse_iterator		rend( void )			{ return reverse_iterator( iterator( _tree->end() ) ); }
 			const_reverse_iterator	rend( void ) const		{ return const_reverse_iterator( iterator( _tree->end() ) ); }
@@ -185,15 +187,15 @@ namespace ft {
 			iterator	insert( iterator hint, const value_type &value ) {
 				if ( hint == end() ) return insert( value ).first;
 				
-				if ( hint->first > value.first ) {
+				if ( _comp( value.first, hint->first ) ) {
 					iterator it = hint;
 					--it;
-					while ( !it.base()->isLeaf && it->first >= value.first )
+					while ( !it.base()->isLeaf && _comp( it->first, value.first ) )
 						--hint; --it;
-				} else if ( hint->first < value.first ) {
+				} else if ( _comp( hint->first, value.first ) ) {
 					iterator it = hint;
 					++it;
-					while ( !it.base()->isLeaf && it->first <= value.first )
+					while ( !it.base()->isLeaf && !_comp( value.first, it->first ) )
 						++hint; ++it;
 				}
 				return insertByHint( hint.base(), value ).first;	
@@ -206,8 +208,7 @@ namespace ft {
 			}
 
 			void	erase( iterator pos ) {
-				iterator tmp = pos;
-				_tree->nodeDelete( tmp.base() );
+				_tree->nodeDelete( pos.base() );
 			}
 
 			void	erase( iterator first, iterator last ) {
@@ -316,7 +317,8 @@ namespace ft {
 				if ( !node->left->isLeaf ) burnTheTree( node->left );
 				if ( !node->right->isLeaf ) burnTheTree( node->right );
 				_node_alloc.destroy( node );
-				_node_alloc.deallocate( node, sizeof(node_type) );				
+				_node_alloc.deallocate( node, sizeof(node_type) );
+				_tree->sizeDown();				
 			}
 
 			void	copyTree( node_type *node ) {
@@ -333,33 +335,30 @@ namespace ft {
 				_tree_alloc.construct( _tree );
 			}
 
-			node_type	*nodeInit( node_type *parent ) {
+			node_type	*nodeInit( node_type *parent, const value_type &value = value_type() ) {
 				node_type	*node;
 
 				node = _node_alloc.allocate( sizeof(node_type) );
-				_node_alloc.construct( node );
+				_node_alloc.construct( node, value );
 				node->parent = parent;
 				node->left = _tree->leaf();
 				node->right = _tree->leaf();
 				node->isLeaf = false;
-				node->color = ( node->parent ) ? RED : BLACK;
+				node->color = RED;
 				return node;
 			}
 
-			ft::pair<iterator, bool>	findPlace( node_type *hint, const value_type &value ) {
-				if ( hint->isLeaf )
-					return ft::make_pair( iterator(hint), true );
+			ft::pair<node_type*, bool>	findParent( node_type *hint, const value_type &value ) {
 
-				node_type *node = hint;
-				node_type *tmp;
-				while ( !node->isLeaf ){
-					if ( node->value->first == value.first ) return ft::make_pair( iterator(node), false );
-					tmp = node;
-					node = ( _comp( value.first, node->value->first ) )
-						? node->left
-						: node->right;
+				node_type *parent = nullptr;
+				while ( !hint->isLeaf ){
+					if ( hint->value->first == value.first ) return ft::make_pair( hint, false );
+					parent = hint;
+					hint = ( _comp( value.first, hint->value->first ) )
+						? hint->left
+						: hint->right;
 				}
-				return ft::make_pair( iterator(tmp), true );
+				return ft::make_pair( parent, true );
 			}
 
 			node_type	*findLowerBound( const key_type &key ) {
@@ -393,40 +392,29 @@ namespace ft {
 			}
 
 			ft::pair<iterator, bool>	insertByHint( node_type *hint, const value_type &value ) {
-				
-				ft::pair<iterator, bool> place = findPlace( hint, value );
-				if ( !place.second ) return place;
-				if ( place.first.base()->isLeaf ) {
-					_tree->setRoot( nodeInit( nullptr ) );
-					_tree->root()->value = _pair_alloc.allocate( sizeof(value_type) );
-					_pair_alloc.construct( _tree->root()->value, value );
-					_tree->leaf()->left = _tree->root();
-					_tree->leaf()->right = _tree->root();
-					_tree->leaf()->parent = _tree->root();
-					_tree->sizeUp();
-					return ft::make_pair( iterator( _tree->root() ), true );
+
+				node_type					*new_node;
+				ft::pair<node_type*, bool>	result = findParent( hint, value );
+
+				if ( !result.second ) return ft::make_pair( hint, false );
+				new_node = nodeInit( result.first, value );
+
+				if ( result.first ) {
+					if ( _comp( value.first, result.first->value->first ) )	result.first->left = new_node;
+					else result.first->right = new_node;
+				} else {
+					_tree->setRoot( new_node );
 				}
 
-				node_type	*parent = place.first.base();
-				node_type	*new_node = nodeInit( parent );
-
-				new_node->value = _pair_alloc.allocate( sizeof(value_type) );
-				_pair_alloc.construct( new_node->value, value );
-
-				if ( _comp( new_node->value->first, parent->value->first ) )
-					parent->left = new_node;
-				else
-					parent->right = new_node;
-
 				_tree->insertCheck( new_node );
-				_tree->sizeUp();
+
 				if ( _comp( value.first, _tree->leaf()->left->value->first ) ) {
 					_tree->leaf()->left = new_node;
 				} else if ( _comp( _tree->leaf()->right->value->first, value.first ) ) {
 					_tree->leaf()->right = new_node;
 				}
-
-				return ft::make_pair( iterator( new_node ), true );
+				_tree->sizeUp();
+				return ft::make_pair( new_node, true );
 			}
 
 
