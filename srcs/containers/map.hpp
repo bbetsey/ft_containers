@@ -109,8 +109,7 @@ namespace ft {
 				if ( this != &src ) {
 					_comp = src._comp;
 					_pair_alloc = src._pair_alloc;
-					burnTheTree( _tree->root() );
-					treeInit();
+					clear();
 					copyTree( src._tree->root() );
 				}
 				return *this;
@@ -146,7 +145,7 @@ namespace ft {
 				return result->second;
 			}
 
-			mapped_type			&operator [] ( const key_type &key )	{ return insert( ft::make_pair( key, mapped_type() ) ).first->second; }
+			mapped_type	&operator [] ( const key_type &key ){ return insert( ft::make_pair( key, mapped_type() ) ).first->second; }
 
 
 			// MARK: - Iterators
@@ -177,6 +176,8 @@ namespace ft {
 
 			void	clear( void ) {
 				burnTheTree( _tree->root() );
+				_tree_alloc.destroy( _tree );
+				_tree_alloc.deallocate( _tree, sizeof( tree_type ) );
 				treeInit();
 			}
 
