@@ -400,20 +400,19 @@ namespace ft {
 				if ( !result.second ) return ft::make_pair( hint, false );
 				new_node = nodeInit( result.first, value );
 
-				if ( result.first ) {
+				if ( result.first )
 					if ( _comp( value.first, result.first->value->first ) )	result.first->left = new_node;
 					else result.first->right = new_node;
-				} else {
+				else
 					_tree->setRoot( new_node );
-				}
 
 				_tree->insertCheck( new_node );
 
-				if ( _comp( value.first, _tree->leaf()->left->value->first ) ) {
+				if ( _comp( value.first, _tree->leaf()->left->value->first ) )
 					_tree->leaf()->left = new_node;
-				} else if ( _comp( _tree->leaf()->right->value->first, value.first ) ) {
+				else if ( _comp( _tree->leaf()->right->value->first, value.first ) )
 					_tree->leaf()->right = new_node;
-				}
+				
 				_tree->sizeUp();
 				return ft::make_pair( new_node, true );
 			}

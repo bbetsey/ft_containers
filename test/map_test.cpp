@@ -118,6 +118,7 @@ void	testFT( void ) {
 	std::cout << "Lower Bound:\t" << dict2.lower_bound( LOWERBOUND )->first << std::endl;
 	std::cout << "Upper Bound:\t" << dict2.upper_bound( UPPERBOUND )->first << std::endl;
 	std::cout << "Begin:\t\t" << dict2.begin()->first << std::endl;
+	std::cout << "Size:\t\t" << dict2.size() << std::endl;
 }
 
 void	testORIG( void ) {
@@ -140,6 +141,7 @@ void	testORIG( void ) {
 	std::cout << "Lower Bound:\t" << dict.lower_bound( LOWERBOUND )->first << std::endl;
 	std::cout << "Upper Bound:\t" << dict.upper_bound( UPPERBOUND )->first << std::endl;
 	std::cout << "Begin:\t\t" << dict.begin()->first << std::endl;
+	std::cout << "Size:\t\t" << dict.size() << std::endl;
 }
 
 std::map<int, int>	makeRandomMap( void ) {
