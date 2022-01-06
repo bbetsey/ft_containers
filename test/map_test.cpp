@@ -228,6 +228,116 @@ void	reverseIteratorTest( void ) {
 
 }
 
+// void	compare( void ) {
+// 	std::cout << "std::greater: " << std::plus<int>{}( 5, 5 ) << std::endl;
+// 	std::cout << "------> std::plus <------" << std::endl;
+// 	{
+// 		std::map<int, int, std::plus<int> >	orig;
+// 		ft::map<int, int, std::plus<int> >	dict;
+
+// 		std::map<int, int>	data = makeRandomMap();
+
+// 		orig.insert( data.begin(), data.end() );
+// 		dict.insert( data.begin(), data.end() );
+
+// 		std::map<int, int>::iterator	it_orig = orig.begin();
+// 		ft::map<int, int>::iterator		it_ft = dict.begin();
+
+// 		for ( ; it_ft != dict.end(); ++it_orig, ++it_ft )
+// 			std::cout << "Orig: " << it_orig->first << " \tFT: " << it_ft->first << std::endl;
+// 	}
+// 	std::cout << "------> std::greater <------" << std::endl;
+// 	{
+// 		std::map<int, int, std::greater<int> >	orig;
+// 		ft::map<int, int, std::greater<int> >	dict;
+
+// 		std::map<int, int>	data = makeRandomMap();
+
+// 		orig.insert( data.begin(), data.end() );
+// 		dict.insert( data.begin(), data.end() );
+
+// 		std::map<int, int>::iterator	it_orig = orig.begin();
+// 		ft::map<int, int>::iterator		it_ft = dict.begin();
+
+// 		for ( ; it_ft != dict.end(); ++it_orig, ++it_ft )
+// 			std::cout << "Orig: " << it_orig->first << " \tFT: " << it_ft->first << std::endl;
+// 	}
+// }
+
+void	insertTest( void ) {
+	std::vector<int>	v1;
+	std::vector<int>	v2;
+	std::map<int, int>	mp1;
+	ft::map<int, int>	mp2;
+	std::pair<std::map<int, int>::iterator, bool>	pair1 = mp1.insert( std::make_pair( 7, 7 ) );
+	ft::pair< ft::map<int, int>::iterator, bool> 	pair2 = mp2.insert( ft::make_pair( 7, 7 ) );
+
+	std::map<int, int>::iterator	it1 = mp1.begin();
+	ft::map<int, int>::iterator		it2 = mp2.begin();
+
+	v1.push_back( it1->first );
+	v1.push_back( it1->second );
+	v1.push_back( pair1.first->first );
+	v1.push_back( pair1.first->second );
+	v1.push_back( pair1.second );
+
+	v2.push_back( it2->first );
+	v2.push_back( it2->second );
+	v2.push_back( pair2.first->first );
+	v2.push_back( pair2.first->second );
+	v2.push_back( pair2.second );
+
+	mp1.insert( std::make_pair( 9, 9 ) );
+	std::pair< std::map<int, int>::iterator, bool >	pair3 = mp1.insert( std::make_pair( 9, 9 ) );
+	std::map<int, int>::iterator	it3 = pair1.first;
+	
+	mp2.insert( ft::make_pair( 9, 9 ) );
+	ft::pair< ft::map<int, int>::iterator, bool >	pair4 = mp2.insert( ft::make_pair( 9, 9 ) );
+	ft::map<int, int>::iterator		it4 = pair2.first;
+
+	std::cout << "Orig: " << pair3.first->first << " FT: " << pair4.first->first << std::endl;
+
+	v1.push_back( it3->first );
+	v1.push_back( it3->second );
+	v1.push_back( pair3.first->first );
+	v1.push_back( pair3.first->second );
+	v1.push_back( pair3.second );
+
+	v2.push_back( it4->first );
+	v2.push_back( it4->second );
+	v2.push_back( pair4.first->first );
+	v2.push_back( pair4.first->second );
+	v2.push_back( pair4.second );
+
+	// for ( int i = 0, j = 0; i < 500000; ++i, ++j ) {
+	// 	mp1.insert( std::make_pair( i, j ) );
+	// 	mp2.insert( ft::make_pair( i, j ) );
+	// }
+
+	// std::map<int, int>::iterator	ito = mp1.begin();
+	// ft::map<int, int>::iterator	itf = mp2.begin();
+	// for ( ; ito != mp1.end(); ++ito, ++itf ) {
+	// 	v1.push_back( ito->first );
+	// 	v1.push_back( ito->second );
+	// 	v2.push_back( itf->first );
+	// 	v2.push_back( itf->second );
+	// }
+
+	v1.push_back( mp1.size() );
+	v2.push_back( mp2.size() );
+
+	std::vector<int>::iterator	itv1 = v1.begin();
+	std::vector<int>::iterator	itv2 = v2.begin();
+	for ( int i = 0; itv1 != v1.end(); ++itv1, ++itv2, ++i ) {
+		if ( *itv1 != *itv2 )
+			std::cout << "Error: " << i << " ";
+		std::cout << "Value orig: " << *itv1 << " Value ft: " << *itv2 << std::endl;
+	}
+	
+
+
+}
+
 
 int	main( void ) {
 
@@ -240,6 +350,10 @@ int	main( void ) {
 	iteratorTest();
 	std::cout << "----------- Test REV ITER -----------" << std::endl;
 	reverseIteratorTest();
+	// std::cout << "----------- Compare -------------" << std::endl;
+	// compare();
+	std::cout << "----------- Insert Value -------------" << std::endl;
+	insertTest();
 	std::cout << "---------------------------------" << std::endl;
 
 	map_less_than_test();

@@ -98,9 +98,8 @@ namespace ft {
 			}
 
 			void	prev( void ) {
-				if ( node->isLeaf ) {
-					node = node->right;
-				} else if ( !node->left->isLeaf ) {
+				if ( node->isLeaf ) node = node->right;
+				else if ( !node->left->isLeaf ) {
 					node = node->left;
 					while ( !node->right->isLeaf )
 						node = node->right;

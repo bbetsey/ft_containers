@@ -397,7 +397,7 @@ namespace ft {
 				node_type					*new_node;
 				ft::pair<node_type*, bool>	result = findParent( hint, value );
 
-				if ( !result.second ) return ft::make_pair( hint, false );
+				if ( !result.second ) return ft::make_pair( result.first, false );
 				new_node = nodeInit( result.first, value );
 
 				if ( result.first )
