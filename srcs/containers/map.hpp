@@ -263,18 +263,18 @@ namespace ft {
 
 			size_type		size( void )	{ return _tree->size(); }
 
-			iterator		lower_bound( const key_type &key )			{ return iterator( findLowerBound( key ) ); }
-			const_iterator	lower_bound( const key_type &key ) const	{ return const_iterator( findLowerBound( key ) ); }
+			iterator		lower_bound( const key_type &key )			{ return iterator( findBound( key ) ); }
+			const_iterator	lower_bound( const key_type &key ) const	{ return const_iterator( findBound( key ) ); }
 
-			iterator		upper_bound( const key_type &key )			{ return iterator( findUpperBound( key ) ); }
-			const_iterator	upper_bound( const key_type &key ) const	{ return const_iterator( findUpperBound( key ) ); }
+			iterator		upper_bound( const key_type &key )			{ return iterator( findBound( key ) ); }
+			const_iterator	upper_bound( const key_type &key ) const	{ return const_iterator( findBound( key ) ); }
 
 			ft::pair<iterator, iterator>	equal_range( const key_type &key ) {
-				return ft::pair<iterator, iterator>( lower_bound( key ), upper_bound( key ) );
+				return ft::make_pair( lower_bound( key ), upper_bound( key ) );
 			}
 
 			ft::pair<const_iterator, const_iterator>	equal_range( const key_type &key ) const {
-				return ft::pair<const_iterator, const_iterator>( lower_bound( key ), upper_bound( key ) );
+				return ft::make_pair( lower_bound( key ), upper_bound( key ) );
 			}
 
 
@@ -362,32 +362,18 @@ namespace ft {
 				return ft::make_pair( parent, true );
 			}
 
-			node_type	*findLowerBound( const key_type &key ) {
+			node_type	*findBound( const key_type &key ) {
 				iterator	it( _tree->root() );
 
 				if ( _comp( it->first, key ) ) {
 					++it;
-					while ( _comp( it->first, key ) && it != end() )
+					while ( it != end() && _comp( it->first, key ) )
 						++it;
 				} else if ( _comp( key, it->first ) ) {
-					--it;
-					while ( _comp( key, it->first ) && it != end() )
-						--it;
-				}
-				return it.base();
-			}
-
-			node_type	*findUpperBound( const key_type &key ) {
-				iterator	it( _tree->root() );
-
-				if ( _comp( it->first, key ) ) {
-					++it;
-					while ( !_comp( key, it->first ) && it != end() )
-						++it;
-				} else if ( _comp( key, it->first ) ) {
-					--it;
-					while ( !_comp( it->first, key ) && it != end() )
-						--it;
+					iterator tmp = it--;
+					while ( it != end() && !_comp( it->first, key ) )
+						tmp = it--;
+					return tmp.base();
 				}
 				return it.base();
 			}
