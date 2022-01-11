@@ -302,7 +302,7 @@ namespace ft {
 					value_type *new_value = new value_type( *upperNode->value );
 					node->value = new_value;
 				}
-				if ( upperNode->color == BLACK )	checkDelete( tmp );
+				if ( upperNode->color == BLACK ) checkDelete( tmp );
 				--_size;
 
 				if ( _leaf.right == node )		_leaf.right = getLast();

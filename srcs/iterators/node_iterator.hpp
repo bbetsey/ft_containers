@@ -105,10 +105,11 @@ namespace ft {
 						node = node->right;
 				} else {
 					iterator_type	current = node;
+					iterator_type	tmp = node;
 					node = node->parent;
 					while ( current->isOnTheLeftSide() ) {
 						current = node;
-						if ( !node->parent ) { node = current->left; break; }
+						if ( !node->parent ) { node = tmp->left; break; }
 						node = node->parent;
 					}
 				}
