@@ -305,10 +305,15 @@ namespace ft {
 				if ( upperNode->color == BLACK ) checkDelete( tmp );
 				--_size;
 
-				if ( _leaf.right == node )		_leaf.right = getLast();
-				else if ( _leaf.left == node )	_leaf.left = getBegin();
-
 				delete upperNode;
+
+				if ( _size == 0 ) {
+					_leaf.right = _root;
+					_leaf.left = _root;
+				} else {
+					if ( _leaf.right == node )	_leaf.right = getLast();
+					if ( _leaf.left == node )	_leaf.left = getBegin();
+				}
 			}
 
 	};

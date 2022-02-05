@@ -150,13 +150,13 @@ namespace ft {
 
 			// MARK: - Iterators
 
-			iterator				begin( void )			{ return _tree->begin(); }
-			const_iterator			begin( void ) const		{ return _tree->begin(); }
+			iterator				begin( void )			{ return _tree->getBegin(); }
+			const_iterator			begin( void ) const		{ return _tree->getBegin(); }
 
 			iterator				end( void )				{ return _tree->end(); }
 			const_iterator			end( void ) const		{ return _tree->end(); }
 
-			iterator				last( void )			{ return _tree->last(); }
+			iterator				last( void )			{ return _tree->getLast(); }
 
 			reverse_iterator		rbegin( void )			{ return reverse_iterator( last() ); }
 			const_reverse_iterator	rbegin( void ) const	{ return const_reverse_iterator( last() ); }
@@ -213,8 +213,12 @@ namespace ft {
 			}
 
 			void	erase( iterator first, iterator last ) {
-				for ( ; first != last; ++first )
-					erase( first );
+				iterator	tmp;
+
+				for ( ; first != last; ) {
+					tmp = first++;
+					erase( tmp );
+				}
 			}
 
 			size_type	erase( const key_type &key ) {

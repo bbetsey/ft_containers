@@ -228,41 +228,29 @@ void	reverseIteratorTest( void ) {
 
 }
 
-// void	compare( void ) {
-// 	std::cout << "std::greater: " << std::plus<int>{}( 5, 5 ) << std::endl;
-// 	std::cout << "------> std::plus <------" << std::endl;
-// 	{
-// 		std::map<int, int, std::plus<int> >	orig;
-// 		ft::map<int, int, std::plus<int> >	dict;
+void	compare( void ) {
+	std::map< int, int >	orig;
+	ft::map< int, int >		dict;
 
-// 		std::map<int, int>	data = makeRandomMap();
+	orig.insert( std::make_pair( 3, 3 ) );
+	dict.insert( ft::make_pair( 3, 3 ) );
 
-// 		orig.insert( data.begin(), data.end() );
-// 		dict.insert( data.begin(), data.end() );
+	orig.erase( 3 );
+	dict.erase( 3 );
 
-// 		std::map<int, int>::iterator	it_orig = orig.begin();
-// 		ft::map<int, int>::iterator		it_ft = dict.begin();
+	std::cout << orig.begin()->first << std::endl;
+	std::cout << dict.begin()->first << std::endl;
 
-// 		for ( ; it_ft != dict.end(); ++it_orig, ++it_ft )
-// 			std::cout << "Orig: " << it_orig->first << " \tFT: " << it_ft->first << std::endl;
-// 	}
-// 	std::cout << "------> std::greater <------" << std::endl;
-// 	{
-// 		std::map<int, int, std::greater<int> >	orig;
-// 		ft::map<int, int, std::greater<int> >	dict;
+	std::map< int, int >::iterator	it = orig.begin();
+	ft::map< int, int >::iterator	itft = dict.begin();
 
-// 		std::map<int, int>	data = makeRandomMap();
-
-// 		orig.insert( data.begin(), data.end() );
-// 		dict.insert( data.begin(), data.end() );
-
-// 		std::map<int, int>::iterator	it_orig = orig.begin();
-// 		ft::map<int, int>::iterator		it_ft = dict.begin();
-
-// 		for ( ; it_ft != dict.end(); ++it_orig, ++it_ft )
-// 			std::cout << "Orig: " << it_orig->first << " \tFT: " << it_ft->first << std::endl;
-// 	}
-// }
+	std::cout << "OR:" << std::endl;
+	for ( ; it != orig.end(); ++it )
+		std::cout << it->first << std::endl;
+	std::cout << "FT:" << std::endl;
+	for ( ; itft != dict.end(); ++itft )
+		std::cout << itft->first << std::endl;
+}
 
 void	insertTest( void ) {
 	std::vector<int>	v1;
@@ -372,8 +360,8 @@ void	eraseTest( void ) {
 	ft::map<int, int>::iterator		it3 = mp.begin();
 	std::map<int, int>::iterator	it4 = mp2.begin();
 
-	for ( ; it3 != mp.end(); it3 = mp.begin() )
-		mp.erase( it3->first );
+	// for ( ; it3 != mp.end(); it3 = mp.begin() )
+	// 	mp.erase( it3->first );
 
 	for ( ; it4 != mp2.end(); it4 = mp2.begin() )
 		mp.erase( it4->first );
@@ -519,24 +507,24 @@ void	boundTest( void ) {
 int	main( void ) {
 
 	std::cout << std::endl;
-	std::cout << "------------ Test FT ------------" << std::endl;
-	testFT();
-	std::cout << "----------- Test ORIG -----------" << std::endl;
-	testORIG();
-	std::cout << "----------- Test ITER -----------" << std::endl;
-	iteratorTest();
-	std::cout << "----------- Test REV ITER -----------" << std::endl;
-	reverseIteratorTest();
+	// std::cout << "------------ Test FT ------------" << std::endl;
+	// testFT();
+	// std::cout << "----------- Test ORIG -----------" << std::endl;
+	// testORIG();
+	// std::cout << "----------- Test ITER -----------" << std::endl;
+	// iteratorTest();
+	// std::cout << "----------- Test REV ITER -----------" << std::endl;
+	// reverseIteratorTest();
 	// std::cout << "----------- Compare -------------" << std::endl;
 	// compare();
-	std::cout << "----------- Insert Value -------------" << std::endl;
-	insertTest();
-	// std::cout << "----------- Erase -------------" << std::endl;
-	// eraseTest();
-	std::cout << "----------- Upper Bound -------------" << std::endl;
-	boundTest();
-	std::cout << "---------------------------------" << std::endl;
-	map_less_than_test();
+	// std::cout << "----------- Insert Value -------------" << std::endl;
+	// insertTest();
+	std::cout << "----------- Erase -------------" << std::endl;
+	eraseTest();
+	// std::cout << "----------- Upper Bound -------------" << std::endl;
+	// boundTest();
+	// std::cout << "---------------------------------" << std::endl;
+	// map_less_than_test();
 	// constructorTest();
 	
 	return 0;
