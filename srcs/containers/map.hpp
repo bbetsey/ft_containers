@@ -181,6 +181,9 @@ namespace ft {
 				treeInit();
 			}
 
+
+			// MARK: - Insert
+
 			ft::pair<iterator, bool>	insert( const value_type &value ) {
 				return insertByHint( _tree->root(), value );
 			}
@@ -208,13 +211,16 @@ namespace ft {
 					insert( ft::make_pair( first->first, first->second ) );
 			}
 
+
+			// MARK: - Erase
+
 			void	erase( iterator pos ) {
-				_tree->nodeDelete( pos.base() );
+				iterator tmp = pos;
+				_tree->nodeDelete( tmp.base() );
 			}
 
 			void	erase( iterator first, iterator last ) {
 				iterator	tmp;
-
 				for ( ; first != last; ) {
 					tmp = first++;
 					erase( tmp );
@@ -229,6 +235,9 @@ namespace ft {
 				}
 				return 0;
 			}
+
+
+			// MARK: - Swap
 
 			void	swap( map &src ) {
 				std::swap( _tree, src._tree );
@@ -267,11 +276,30 @@ namespace ft {
 
 			size_type		size( void )	{ return _tree->size(); }
 
-			iterator		lower_bound( const key_type &key )			{ return iterator( findBound( key ) ); }
-			const_iterator	lower_bound( const key_type &key ) const	{ return const_iterator( findBound( key ) ); }
+			iterator		lower_bound( const key_type &key )			{ return findBound( key ); }
+			const_iterator	lower_bound( const key_type &key ) const	{ return findBound( key ); }
 
-			iterator		upper_bound( const key_type &key )			{ return iterator( findBound( key ) ); }
-			const_iterator	upper_bound( const key_type &key ) const	{ return const_iterator( findBound( key ) ); }
+			iterator		upper_bound( const key_type &key ) {
+				iterator tmp = lower_bound( key );
+				if ( tmp == end() )
+					return tmp;
+				else {
+					if ( _comp( key, tmp->first ) )
+						return tmp;
+					return ++tmp;
+				}
+			}
+
+			const_iterator		upper_bound( const key_type &key ) const {
+				const_iterator tmp = lower_bound( key );
+				if ( tmp == end() )
+					return tmp;
+				else {
+					if ( _comp( key, tmp->first ) )
+						return tmp;
+					return ++tmp;
+				}
+			}
 
 			ft::pair<iterator, iterator>	equal_range( const key_type &key ) {
 				return ft::make_pair( lower_bound( key ), upper_bound( key ) );
@@ -355,8 +383,8 @@ namespace ft {
 
 			ft::pair<node_type*, bool>	findParent( node_type *hint, const value_type &value ) {
 
-				node_type *parent = nullptr;
-				while ( !hint->isLeaf ){
+				node_type *parent = NULL;
+				while ( !hint->isLeaf ) {
 					if ( hint->value->first == value.first ) return ft::make_pair( hint, false );
 					parent = hint;
 					hint = ( _comp( value.first, hint->value->first ) )
@@ -366,20 +394,50 @@ namespace ft {
 				return ft::make_pair( parent, true );
 			}
 
-			node_type	*findBound( const key_type &key ) {
-				iterator	it( _tree->root() );
+			iterator	findBound( const key_type &key ) {
+				node_type	*tmp = _tree->root();
 
-				if ( _comp( it->first, key ) ) {
-					++it;
-					while ( it != end() && _comp( it->first, key ) )
-						++it;
-				} else if ( _comp( key, it->first ) ) {
-					iterator tmp = it--;
-					while ( it != end() && !_comp( it->first, key ) )
-						tmp = it--;
-					return tmp.base();
+				while ( !tmp->isLeaf ) {
+					if ( key == tmp->value->first )
+						return iterator( tmp );
+					else {
+						if ( _comp( key, tmp->value->first ) ) {
+							if ( !tmp->left->isLeaf )
+								tmp = tmp->left;
+							else
+								return iterator( tmp );
+						} else {
+							if ( !tmp->right->isLeaf )
+								tmp = tmp->right;
+							else
+								return ++iterator( tmp );
+						}
+					}
 				}
-				return it.base();
+				return end();
+			}
+
+			const_iterator	findBound( const key_type &key ) const {
+				node_type	*tmp = _tree->root();
+
+				while ( !tmp->isLeaf ) {
+					if ( key == tmp->value.first )
+						return const_iterator( tmp );
+					else {
+						if ( _comp( key, tmp->value.first ) ) {
+							if ( !tmp->left->isLeaf )
+								tmp = tmp->left;
+							else
+								return const_iterator( tmp );
+						} else {
+							if ( !tmp->right->isLeaf )
+								tmp = tmp->right;
+							else
+								return ++const_iterator( tmp );
+						}
+					}
+				}
+				return end();
 			}
 
 			ft::pair<iterator, bool>	insertByHint( node_type *hint, const value_type &value ) {
