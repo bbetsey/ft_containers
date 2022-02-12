@@ -6,7 +6,7 @@
 
 namespace ft {
 
-	template < class T1, class T2 >
+	template < class T1, typename T2 >
 	struct pair {
 		
 		// MARK: - Member Types

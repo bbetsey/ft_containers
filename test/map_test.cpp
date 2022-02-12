@@ -94,6 +94,8 @@ void	constructorTest( void ) {
 		std::cout << "[FALSE]" << std::endl;
 }
 
+
+
 void	testFT( void ) {
 	ft::map<int, int>				dict;
 	ft::map<int, int>::iterator		it;
@@ -108,6 +110,7 @@ void	testFT( void ) {
 	ft::map<int, int> dict2;
 	dict2 = dict1;
 
+	dict2.erase( dict2.begin() );
 	dict2.erase( dict2.begin() );
 	dict2.erase( 30 );
 	dict2.erase( 19 );
@@ -132,6 +135,7 @@ void	testORIG( void ) {
 	dict.insert( data.begin(), data.end() );
 
 	dict.erase( dict.begin() );
+	dict.erase( dict.begin() );
 	dict.erase( 30 );
 	dict.erase( 19 );
 	for ( it = dict.begin(); it != dict.end(); ++it )
@@ -143,6 +147,9 @@ void	testORIG( void ) {
 	std::cout << "Begin:\t\t" << dict.begin()->first << std::endl;
 	std::cout << "Size:\t\t" << dict.size() << std::endl;
 }
+
+
+
 
 std::map<int, int>	makeRandomMap( void ) {
 	int low_dist  = 1;
@@ -333,7 +340,7 @@ void	eraseTest( void ) {
 
 	v.push_back( mp.erase( 3 ) );
 	v2.push_back( mp2.erase( 3 ) );
-	for ( int i = 0, j = 0; i < 50; ++i, ++j ) {
+	for ( int i = 0, j = 0; i < 30; ++i, ++j ) {
 		mp.insert( ft::make_pair( i, j ) );
 		mp2.insert( std::make_pair( i, j ) );
 	}
@@ -360,82 +367,78 @@ void	eraseTest( void ) {
 	std::vector<int>::iterator	itv1 = v.begin();
 	std::vector<int>::iterator	itv2 = v2.begin();
 
-<<<<<<< HEAD
-	// for ( ; it3 != mp.end(); it3 = mp.begin() )
-	// 	mp.erase( it3->first );
-=======
-	for ( ; itv1 != v.end() && itv2 != v2.end(); ++itv1, ++itv2 ) {
-		std::cout << "Origin: " << *itv2 << " \tFT: " << *itv2 << std::endl;
-	}
-
-	ft::map<int, int>::iterator		it3 = mp.begin();
-	// std::map<int, int>::iterator	it4 = mp2.begin();
-
-	// std::cout << "Begin: " << it3->first << " End: " << mp.rbegin()->first << std::endl;
-	// std::cout << "Result: " << mp.erase( it3->first ) << std::endl;
-	// it3 = mp.begin();
-	// std::cout << "Begin: " << it3->first << " End: " << mp.rbegin()->first << std::endl;
-	// std::cout << "Result: " << mp.erase( it3->first ) << std::endl;
-	// it3 = mp.begin();
-	// std::cout << "Begin: " << it3->first << " End: " << mp.rbegin()->first << std::endl;
-	// std::cout << "Result: " << mp.erase( it3->first ) << std::endl;
-	// it3 = mp.begin();
-	// std::cout << "Begin: " << it3->first << " End: " << mp.rbegin()->first << std::endl;
-	// std::cout << "Result: " << mp.erase( it3->first ) << std::endl;
-	// it3 = mp.begin();
-	// std::cout << "Begin: " << it3->first << " End: " << mp.rbegin()->first << std::endl;
-	for ( ; it3 != mp.end(); ) {
-		// std::cout << it3->first << " ";
-		if ( mp.erase( it3->first ) == 1 )
-			std::cout << it3->first << " ";
-		it3 = mp.begin();
-	}
->>>>>>> 536e99df0a2566c9619b0118553fad2e585a1ad3
-
-	// for ( ; it4 != mp2.end(); it4 = mp2.begin() ) {
-	// 	std::cout << it4->first << " "; mp.erase( it4->first ); 
-	// }
+	std::cout << "FT vec:" << std::endl;
+	for ( ; itv1 != v.end(); ++itv1 )
+		std::cout << *itv1 << " ";
+	std::cout << std::endl;
+	std::cout << "OR vec:" << std::endl;
+	for ( ; itv2 != v2.end(); ++itv2 )
+		std::cout << *itv2 << " ";
 	std::cout << std::endl;
 
-	ft::map<int, int>::iterator		end = mp.end();
-	std::map<int, int>::iterator	end2 = mp2.end();
+	ft::map<int, int>::iterator		it3 = mp.begin();
+	std::map<int, int>::iterator	it4 = mp2.begin();
 
-	--end; --end2;
+	std::cout << "FT:" << std::endl;
+	for ( ; it3 != mp.end(); ++it3 )
+		std::cout << it3->first << " ";
+	std::cout << std::endl;
+	std::cout << "OR:" << std::endl;
+	for ( ; it4 != mp2.end(); ++it4 )
+		std::cout << it4->first << " ";
+	std::cout << std::endl;
 
-	v.push_back( mp.erase( 299999 ) );
-	v2.push_back( mp2.erase( 299999 ) );
-	v.push_back( mp.size() );
-	v2.push_back( mp2.size() );
+	it3 = mp.begin(); it4 = mp2.begin();
 
-	ft::map<int, int>	mp3;
-	std::map<int, int>	mp4;
-
-	for ( int i = 0, j = 0; i < 10; ++i, ++j ) {
-		mp3.insert( ft::make_pair( i, j ) );
-		mp4.insert( std::make_pair( i, j ) );
+	for ( ; it3 != mp.end(); it3 = mp.begin() ) {
+		mp.erase( it3->first );
 	}
 
-	mp3.erase( 2 ); mp3.erase( 7 );
-	mp4.erase( 2 ); mp4.erase( 7 );
-
-	ft::map<int, int>::iterator		it5 = mp3.begin();
-	std::map<int, int>::iterator	it6 = mp4.begin();
-
-	for ( ; it5 != mp3.end(); ++it5, ++it6 ) {
-		v.push_back( it5->first );
-		v.push_back( it5->second );
-		v2.push_back( it6->first );
-		v2.push_back( it6->second );
+	for ( ; it4 != mp2.end(); it4 = mp2.begin() ) {
+		std::cout << it4->first << std::endl; mp2.erase( it4->first ); 
 	}
+
+	std::cout << std::endl;
+
+	// ft::map<int, int>::iterator		end = mp.end();
+	// std::map<int, int>::iterator	end2 = mp2.end();
+
+	// --end; --end2;
+
+	// v.push_back( mp.erase( 299999 ) );
+	// v2.push_back( mp2.erase( 299999 ) );
+	// v.push_back( mp.size() );
+	// v2.push_back( mp2.size() );
+
+	// ft::map<int, int>	mp3;
+	// std::map<int, int>	mp4;
+
+	// for ( int i = 0, j = 0; i < 10; ++i, ++j ) {
+	// 	mp3.insert( ft::make_pair( i, j ) );
+	// 	mp4.insert( std::make_pair( i, j ) );
+	// }
+
+	// mp3.erase( 2 ); mp3.erase( 7 );
+	// mp4.erase( 2 ); mp4.erase( 7 );
+
+	// ft::map<int, int>::iterator		it5 = mp3.begin();
+	// std::map<int, int>::iterator	it6 = mp4.begin();
+
+	// for ( ; it5 != mp3.end(); ++it5, ++it6 ) {
+	// 	v.push_back( it5->first );
+	// 	v.push_back( it5->second );
+	// 	v2.push_back( it6->first );
+	// 	v2.push_back( it6->second );
+	// }
 
 	
 
-	int i = 0;
-	for ( ; itv1 != v.end(); ++itv1, ++itv2 ) {
-		if ( *itv1 != *itv2 )
-			++i;
-	}
-	std::cout << "Errors: " << i << std::endl;
+	// int i = 0;
+	// for ( ; itv1 != v.end(); ++itv1, ++itv2 ) {
+	// 	if ( *itv1 != *itv2 )
+	// 		++i;
+	// }
+	// std::cout << "Errors: " << i << std::endl;
 }
 
 std::vector<int> upper_bound_test(std::map<int, int> mp) {
@@ -537,17 +540,16 @@ void	boundTest( void ) {
 int	main( void ) {
 
 	std::cout << std::endl;
-	// std::cout << "------------ Test FT ------------" << std::endl;
-	// testFT();
-	// std::cout << "----------- Test ORIG -----------" << std::endl;
-	// testORIG();
+	std::cout << "------------ Test FT ------------" << std::endl;
+	testFT();
+	std::cout << "----------- Test ORIG -----------" << std::endl;
+	testORIG();
 	// std::cout << "----------- Test ITER -----------" << std::endl;
 	// iteratorTest();
 	// std::cout << "----------- Test REV ITER -----------" << std::endl;
 	// reverseIteratorTest();
 	// std::cout << "----------- Compare -------------" << std::endl;
 	// compare();
-<<<<<<< HEAD
 	// std::cout << "----------- Insert Value -------------" << std::endl;
 	// insertTest();
 	std::cout << "----------- Erase -------------" << std::endl;
@@ -556,16 +558,6 @@ int	main( void ) {
 	// boundTest();
 	// std::cout << "---------------------------------" << std::endl;
 	// map_less_than_test();
-=======
-	std::cout << "----------- Insert Value -------------" << std::endl;
-	insertTest();
-	std::cout << "----------- Erase -------------" << std::endl;
-	eraseTest();
-	std::cout << "----------- Upper Bound -------------" << std::endl;
-	boundTest();
-	std::cout << "---------------------------------" << std::endl;
-	map_less_than_test();
->>>>>>> 536e99df0a2566c9619b0118553fad2e585a1ad3
 	// constructorTest();
 	
 	return 0;

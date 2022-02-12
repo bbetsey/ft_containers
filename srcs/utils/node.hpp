@@ -31,9 +31,9 @@ namespace ft {
 
 		// MARK: - Struct Constructors
 
-		node( void ) : value( new value_type() ), color( BLACK ), isLeaf( true ), parent( nullptr ), left( nullptr ), right( nullptr ) {}
+		node( void ) : value( new value_type() ), color( BLACK ), isLeaf( true ), parent( NULL ), left( NULL ), right( NULL ) {}
 
-		node( const value_type &val, node *parent = nullptr, node *left = nullptr, node *right = nullptr )
+		node( const value_type &val, node *parent = NULL, node *left = NULL, node *right = NULL )
 		:
 			value( new value_type(val) ),
 			color( BLACK ),

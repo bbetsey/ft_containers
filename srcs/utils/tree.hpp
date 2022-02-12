@@ -140,7 +140,7 @@ namespace ft {
 							brother->color = RED;
 							node = node->parent;
 						} else {
-							if ( brother->color == BLACK ) {
+							if ( brother->right->color == BLACK ) {
 								brother->left->color = BLACK;
 								brother->color = RED;
 								rightRotate( brother );
@@ -164,7 +164,7 @@ namespace ft {
 							brother->color = RED;
 							node = node->parent;
 						} else {
-							if ( brother->color == BLACK ) {
+							if ( brother->left->color == BLACK ) {
 								brother->left->color = BLACK;
 								brother->color = RED;
 								leftRotate( brother );
@@ -172,7 +172,7 @@ namespace ft {
 							}
 							brother->color = node->parent->color;
 							node->parent->color = BLACK;
-							brother->right->color = BLACK;
+							brother->left->color = BLACK;
 							rightRotate( node->parent );
 							node = _root;
 						}
@@ -190,7 +190,7 @@ namespace ft {
 			rbTree( void ) : _size( 0 ) {
 				_leaf.left = &_leaf;
 				_leaf.right = &_leaf;
-				_leaf.parent = &_leaf;
+				_leaf.parent = 0;
 				_leaf.isLeaf = true;
 				_leaf.color = BLACK;
 				_root = &_leaf;
@@ -202,7 +202,7 @@ namespace ft {
 			rbTree( const tree_type & ) : _size( 0 ) {
 				_leaf.left = &_leaf;
 				_leaf.right = &_leaf;
-				_leaf.parent = &_leaf;
+				_leaf.parent = 0;
 				_leaf.isLeaf = true;
 				_leaf.color = BLACK;
 				_root = &_leaf;
@@ -268,23 +268,28 @@ namespace ft {
 			}
 
 			node_type	*end( void ) {
-				return &_leaf;
+				node_type* tmp = _root;
+				while (!tmp->right->isLeaf)
+					tmp = tmp->right;
+				return tmp->right;
 			}
 
 			node_type	*findNodeWithOneLeafOrMore( node_type *node ) {
-				if ( node->hasOneOrMoreLeaf() )
-					return node;
-				node = node->right;
-				while ( !node->left->isLeaf )
-					node = node->left;
-				return node;
+				node_type *tmp = node;
+				if ( tmp->hasOneOrMoreLeaf() )
+					return tmp;
+				tmp = tmp->right;
+				while ( !tmp->left->isLeaf )
+					tmp = tmp->left;
+				return tmp;
 			}
 
 			void	nodeDelete( node_type *node ) {
 				if ( !node || node->isLeaf ) return;
-				
+
 				node_type *tmp, *upperNode;
 				upperNode = findNodeWithOneLeafOrMore( node );
+
 				tmp = ( upperNode->left->isLeaf )
 					? upperNode->right
 					: upperNode->left;
@@ -308,12 +313,14 @@ namespace ft {
 				delete upperNode;
 
 				if ( _size == 0 ) {
-					_leaf.right = _root;
-					_leaf.left = _root;
+					_root = &_leaf;
+					_leaf.right = &_leaf;
+					_leaf.left = &_leaf;
 				} else {
-					if ( _leaf.right == node )	_leaf.right = getLast();
-					if ( _leaf.left == node )	_leaf.left = getBegin();
+					_leaf.right = getLast();
+					_leaf.left = getBegin();
 				}
+
 			}
 
 	};
