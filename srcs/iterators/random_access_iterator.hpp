@@ -69,7 +69,7 @@ namespace ft {
 
 			random_access_iterator	operator ++ ( int ) {
 				random_access_iterator	tmp( *this );
-				++tmp;
+				++(*this);
 				return tmp;
 			}
 
@@ -77,7 +77,7 @@ namespace ft {
 			
 			random_access_iterator	operator -- ( int ) {
 				random_access_iterator	tmp( *this );
-				--tmp;
+				--(*this);
 				return tmp;
 			}
 
