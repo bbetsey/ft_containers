@@ -4,5 +4,5 @@
 
 - Vector
 - Stack
-- Map (base on red/black tree)
-- Set (base on red/black tree)
+- Map (based on red/black tree)
+- Set (based on red/black tree)
