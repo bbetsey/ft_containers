@@ -58,7 +58,7 @@ namespace ft {
 			explicit set( const Compare &comp, const Allocator &alloc = Allocator() ) : _comp( comp ), _allocator( alloc ) { treeInit(); }
 
 			template< class InputIt >
-			set( InputIt first, InputIt last, const Compare &comp = Compare(), const Allocator &alloc = Allocator() ) : _comp( comp ), _allocator( alloc ) {
+			set( InputIt first, InputIt last, const Compare &comp = Compare(), const Allocator &alloc = Allocator() ) : _allocator( alloc ), _comp( comp ) {
 				treeInit();
 				for ( ; first != last; ++first )
 					insert( *first );

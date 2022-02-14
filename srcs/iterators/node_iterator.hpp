@@ -38,7 +38,7 @@ namespace ft {
 
 			// MARK: - Class Copy Constructor
 
-			// node_iterator( const node_iterator &src ) : node( src.node ) {}
+			node_iterator( const node_iterator &src ) : node( src.node ) {}
 
 			template < class N1, class V1 >
 			node_iterator( const node_iterator<N1, V1> &src, typename ft::enable_if<std::is_convertible<N1, Node>::value>::type* = 0 ) : node( src.base() ) {}

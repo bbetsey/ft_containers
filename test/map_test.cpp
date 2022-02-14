@@ -544,21 +544,21 @@ int	main( void ) {
 	testFT();
 	std::cout << "----------- Test ORIG -----------" << std::endl;
 	testORIG();
-	// std::cout << "----------- Test ITER -----------" << std::endl;
-	// iteratorTest();
-	// std::cout << "----------- Test REV ITER -----------" << std::endl;
-	// reverseIteratorTest();
-	// std::cout << "----------- Compare -------------" << std::endl;
-	// compare();
-	// std::cout << "----------- Insert Value -------------" << std::endl;
-	// insertTest();
+	std::cout << "----------- Test ITER -----------" << std::endl;
+	iteratorTest();
+	std::cout << "----------- Test REV ITER -----------" << std::endl;
+	reverseIteratorTest();
+	std::cout << "----------- Compare -------------" << std::endl;
+	compare();
+	std::cout << "----------- Insert Value -------------" << std::endl;
+	insertTest();
 	std::cout << "----------- Erase -------------" << std::endl;
 	eraseTest();
-	// std::cout << "----------- Upper Bound -------------" << std::endl;
-	// boundTest();
-	// std::cout << "---------------------------------" << std::endl;
-	// map_less_than_test();
-	// constructorTest();
+	std::cout << "----------- Upper Bound -------------" << std::endl;
+	boundTest();
+	std::cout << "---------------------------------" << std::endl;
+	map_less_than_test();
+	constructorTest();
 	
 	return 0;
 }
